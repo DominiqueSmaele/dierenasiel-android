@@ -1,0 +1,59 @@
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
+
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
+
+class AuthenticationRepository {
+  final _controller = StreamController<AuthenticationStatus>();
+  final storage = new FlutterSecureStorage();
+
+  Stream<AuthenticationStatus> get status async* {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    yield AuthenticationStatus.unauthenticated;
+    yield* _controller.stream;
+  }
+
+  Future<void> logIn({
+    required String email,
+    required String password,
+  }) async {
+      final url = Uri.parse('${dotenv.env['API']}/login');
+
+      try {
+        final response = await http.post(
+          url, 
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json'
+          },
+          body: jsonEncode(<String, String>{
+            'email': email,
+            'password': password
+          }),
+        );
+
+        final data = jsonDecode(response.body);
+
+        if (response.statusCode != 200) {
+          final errorMessage = data['error'] ?? 'Unknown error occurred';
+
+          throw Exception(errorMessage);
+        }
+
+        await storage.write(key: 'token', value: data['token']);
+
+        _controller.add(AuthenticationStatus.authenticated);
+      } catch (e) {
+        throw e;
+      }
+  }
+
+  void logOut() {
+    _controller.add(AuthenticationStatus.unauthenticated);
+  }
+
+  void dispose() => _controller.close();
+}
