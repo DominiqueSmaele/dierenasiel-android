@@ -51,6 +51,45 @@ class AuthenticationRepository {
       }
   }
 
+  Future<void> register({
+    required String firstname,
+    required String lastname,
+    required String email,
+    required String password,
+  }) async {
+    final url = Uri.parse('${dotenv.env['API']}/register');
+
+    try {
+      final response = await http.post(
+        url, 
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        body: jsonEncode(<String, String>{
+          'firstname': firstname,
+          'lastname': lastname,
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode != 201) {
+        final errorMessage = data['error'] ?? 'Unknown error occurred';
+
+        throw Exception(errorMessage);
+      }
+
+      await storage.write(key: 'token', value: data['token']);
+
+      _controller.add(AuthenticationStatus.authenticated);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   void logOut() {
     _controller.add(AuthenticationStatus.unauthenticated);
   }

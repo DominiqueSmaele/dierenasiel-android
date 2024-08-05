@@ -1,13 +1,13 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dierenasiel_android/login/login.dart';
+import 'package:dierenasiel_android/register/register.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const LoginPage());
+    return MaterialPageRoute(builder: (_) => const RegisterPage());
   }
 
   @override
@@ -16,11 +16,11 @@ class LoginPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: BlocProvider(
-          create: (context) => LoginBloc(
-            authenticationRepository: context.read<AuthenticationRepository>(),
+          create: (context) => RegisterBloc(
+            authenticationRepository: context.read<AuthenticationRepository>()
           ),
-          child: const LoginForm(),
-        ),
+          child: const RegisterForm(),
+        )
       ),
     );
   }

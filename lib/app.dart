@@ -65,7 +65,7 @@ class _AppViewState extends State<AppView> {
       navigatorKey: _navigatorKey,
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFE0DFEC),
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF736ACC)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF736ACC)),
         useMaterial3: true,
       ),
       builder: (context, child) {

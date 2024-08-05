@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dierenasiel_android/login/login.dart';
-import 'package:dierenasiel_android/register/view/register_page.dart';
+import 'package:dierenasiel_android/register/register.dart';
+import 'package:dierenasiel_android/login/view/login_page.dart';
 import 'package:formz/formz.dart';
 
-class LoginForm extends StatelessWidget {
-  const LoginForm({super.key});
+class RegisterForm extends StatelessWidget {
+  const RegisterForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginBloc, LoginState>(
+    return BlocListener<RegisterBloc, RegisterState>(
       listener: (context, state) {
         if (state.status.isFailure) {
-          ScaffoldMessenger.of(context)
+          ScaffoldMessenger.of(context) 
             ..hideCurrentSnackBar()
             ..showSnackBar(
               const SnackBar(
@@ -31,18 +31,22 @@ class LoginForm extends StatelessWidget {
               children: [
                 const SizedBox(height: 25),
                 _LogoAndAppNameField(),
-                const SizedBox(height: 100),
+                const SizedBox(height: 50),
+                _FirstnameInput(),
+                const Padding(padding: EdgeInsets.all(16)),
+                _LastnameInput(),
+                const Padding(padding: EdgeInsets.all(16)),
                 _EmailInput(),
                 const Padding(padding: EdgeInsets.all(16)),
                 _PasswordInput(),
                 const Padding(padding: EdgeInsets.all(16)),
-                _LoginButton(),
-                _SignUpField(),
-              ],
-            ),
-          ),
-        ),
-      ),
+                _RegisterButton(),
+                _LoginField(),
+              ]
+            )
+          )
+        )
+      )
     );
   }
 }
@@ -72,17 +76,59 @@ class _LogoAndAppNameField extends StatelessWidget {
   }
 }
 
+class _FirstnameInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final displayError = context.select(
+      (RegisterBloc bloc) => bloc.state.firstname.displayError,
+    );
+
+    return TextField(
+        key: const Key('registerForm_firstnameInput_textField'),
+        onChanged: (firstname) {
+          context.read<RegisterBloc>().add(RegisterFirstnameChanged(firstname));
+        },
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: 'Voornaam',
+          errorText: displayError != null ? 'Ongeldige voornaam' : null,
+        ),
+      );
+  }
+}
+
+class _LastnameInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final displayError = context.select(
+      (RegisterBloc bloc) => bloc.state.lastname.displayError,
+    );
+
+    return TextField(
+        key: const Key('registerForm_lastnameInput_textField'),
+        onChanged: (lastname) {
+          context.read<RegisterBloc>().add(RegisterLastnameChanged(lastname));
+        },
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: 'Achternaam',
+          errorText: displayError != null ? 'Ongeldige achternaam' : null,
+        ),
+      );
+  }
+}
+
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayError = context.select(
-      (LoginBloc bloc) => bloc.state.email.displayError,
+      (RegisterBloc bloc) => bloc.state.email.displayError,
     );
 
     return TextField(
-        key: const Key('loginForm_emailInput_textField'),
+        key: const Key('registerForm_emailInput_textField'),
         onChanged: (email) {
-          context.read<LoginBloc>().add(LoginEmailChanged(email));
+          context.read<RegisterBloc>().add(RegisterEmailChanged(email));
         },
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
@@ -98,13 +144,13 @@ class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayError = context.select(
-      (LoginBloc bloc) => bloc.state.password.displayError,
+      (RegisterBloc bloc) => bloc.state.password.displayError,
     );
 
     return TextField(
-        key: const Key('loginForm_passwordInput_textField'),
+        key: const Key('registerForm_passwordInput_textField'),
         onChanged: (password) {
-          context.read<LoginBloc>().add(LoginPasswordChanged(password));
+          context.read<RegisterBloc>().add(RegisterPasswordChanged(password));
         },
         obscureText: true,
         decoration: InputDecoration(
@@ -117,44 +163,44 @@ class _PasswordInput extends StatelessWidget {
   }
 }
 
-class _LoginButton extends StatelessWidget {
+class _RegisterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isInProgressOrSuccess = context.select(
-      (LoginBloc bloc) => bloc.state.status.isInProgressOrSuccess,
+      (RegisterBloc bloc) => bloc.state.status.isInProgressOrSuccess,
     );
 
     if (isInProgressOrSuccess) return const CircularProgressIndicator();
 
-    final isValid = context.select((LoginBloc bloc) => bloc.state.isValid);
+    final isValid = context.select((RegisterBloc bloc) => bloc.state.isValid);
 
     return SizedBox(
       width: double.infinity,
       height: 40,
       child: ElevatedButton(
-        key: const Key('loginForm_continue_raisedButton'),
+        key: const Key('registerForm_continue_raisedButton'),
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF736ACC),
           foregroundColor: Colors.white,
         ),
         onPressed: isValid
-            ? () => context.read<LoginBloc>().add(const LoginSubmitted())
+            ? () => context.read<RegisterBloc>().add(const RegisterSubmitted())
             : null,
-        child: const Text('Log In'),
+        child: const Text('Meld aan'),
       ),
     );
   }
 }
 
-class _SignUpField extends StatelessWidget {
+class _LoginField extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Nog geen account?'),
+          const Text('Heeft u al een account?'),
           TextButton(
-            key: const Key('loginForm_signUp_textButton'),
+            key: const Key('registerForm_login_textButton'),
             style: ButtonStyle(
               overlayColor: WidgetStateProperty.all(Colors.transparent),
               padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(5)),
@@ -162,11 +208,11 @@ class _SignUpField extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const RegisterPage()),
+                MaterialPageRoute(builder: (context) => const LoginPage()),
               );
             },
             child: const Text(
-              'Meld aan',
+              'Log in',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               )
