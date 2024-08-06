@@ -6,6 +6,7 @@ import 'package:dierenasiel_android/home/home.dart';
 import 'package:dierenasiel_android/login/login.dart';
 import 'package:dierenasiel_android/splash/splash.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:dierenasiel_android/helper/theme.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -63,11 +64,7 @@ class _AppViewState extends State<AppView> {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: _navigatorKey,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFE0DFEC),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF736ACC)),
-        useMaterial3: true,
-      ),
+      theme: customTheme,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
