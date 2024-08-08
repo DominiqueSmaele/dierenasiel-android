@@ -32,10 +32,10 @@ class UserRepository {
       }
 
       return _user = User(
-        data['id'],
-        data['firstname'],
-        data['lastname'],
-        data['email']
+        id: data['id'] as int,
+        firstname: data['firstname'] as String,
+        lastname: data['lastname'] as String,
+        email: data['email'] as String,
       );
     } catch (e) {
       throw e;
