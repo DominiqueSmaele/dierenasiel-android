@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/profile/profile.dart';
 import 'package:user_repository/user_repository.dart';
 
-class ProfileEditPage extends StatelessWidget {
-  const ProfileEditPage({super.key});
+class ProfileUpdatePage extends StatelessWidget {
+  const ProfileUpdatePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +15,12 @@ class ProfileEditPage extends StatelessWidget {
           final user = context.select((AuthenticationBloc bloc) => bloc.state.user);
 
           return BlocProvider(
-            create: (context) => ProfileEditBloc(
+            create: (context) => ProfileUpdateBloc(
               userRepository: context.read<UserRepository>(),
               authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
               user: user,
             ),
-            child: const ProfileEditView(),
+            child: const ProfileUpdateView(),
           );
         },
       ),

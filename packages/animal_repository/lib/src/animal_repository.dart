@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:animal_repository/src/models/models.dart';
+import 'package:animal_repository/animal_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -34,7 +34,9 @@ class AnimalRepository {
       );
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to retrieve animals...');
+        final jsonResponse = jsonDecode(response.body);
+
+        throw ApiException(jsonResponse['message'] ?? '');
       }
 
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;

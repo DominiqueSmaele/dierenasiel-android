@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:user_repository/src/models/models.dart';
+import 'package:user_repository/user_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -25,11 +25,12 @@ class UserRepository {
       );
 
       final jsonResponse = jsonDecode(response.body);
-      final data = jsonResponse['data'] as Map<String, dynamic>;
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to retrieve user...');
+        throw ApiException(jsonResponse['message'] ?? '');
       }
+
+      final data = jsonResponse['data'] as Map<String, dynamic>;
 
       return _user = User(
         id: data['id'] as int,
@@ -66,11 +67,12 @@ class UserRepository {
       );
 
       final jsonResponse = jsonDecode(response.body);
-      final data = jsonResponse['data'] as Map<String, dynamic>;
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to retrieve user...');
+        throw ApiException(jsonResponse['message'] ?? '');
       }
+
+      final data = jsonResponse['data'] as Map<String, dynamic>;
 
       return _user = User(
         id: data['id'] as int,
@@ -79,8 +81,38 @@ class UserRepository {
         email: data['email'] as String,
       );
     } catch (e) {
-      print(e);
       throw e;
+    }
+  }
+
+  Future<void> updateUserPassword({
+    required String password,
+    required String repeatPassword,
+  }) async {
+    try {
+      final url = Uri.parse('${dotenv.env['API']}/user/password');
+      final token = await storage.read(key: 'token');
+
+      final response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{
+          'password': password,
+          'repeat_password': repeatPassword,
+        }),
+      );
+
+      final jsonResponse = jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        throw ApiException(jsonResponse['message'] ?? '');
+      }
+    } catch (e) {
+      throw (e);
     }
   }
 }

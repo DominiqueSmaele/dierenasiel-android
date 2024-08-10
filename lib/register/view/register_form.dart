@@ -32,7 +32,7 @@ class RegisterForm extends StatelessWidget {
               children: [
                 const SizedBox(height: 25),
                 _LogoAndAppNameField(),
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
                 _FirstnameInput(),
                 const Padding(padding: EdgeInsets.all(16)),
                 _LastnameInput(),
@@ -80,9 +80,17 @@ class _LogoAndAppNameField extends StatelessWidget {
 class _FirstnameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final displayError = context.select(
-      (RegisterBloc bloc) => bloc.state.firstname.displayError,
+    final firstNameError = context.select(
+      (RegisterBloc bloc) => bloc.state.firstname,
     );
+
+    String? errorText;
+    switch (firstNameError.error) {
+      case FirstnameValidationError.empty:
+        errorText = 'Voornaam mag niet leeg zijn';
+      default:
+        errorText = 'Ongeldige voornaam';
+    }
 
     return TextField(
         key: const Key('registerForm_firstnameInput_textField'),
@@ -92,7 +100,7 @@ class _FirstnameInput extends StatelessWidget {
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: 'Voornaam',
-          errorText: displayError != null ? 'Ongeldige voornaam' : null,
+          errorText: firstNameError.displayError != null ? errorText : null,
         ),
       );
   }
@@ -101,9 +109,17 @@ class _FirstnameInput extends StatelessWidget {
 class _LastnameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final displayError = context.select(
-      (RegisterBloc bloc) => bloc.state.lastname.displayError,
+    final lastNameError = context.select(
+      (RegisterBloc bloc) => bloc.state.lastname,
     );
+
+    String? errorText;
+    switch (lastNameError.error) {
+      case LastnameValidationError.empty:
+        errorText = 'Achternaam mag niet leeg zijn';
+      default:
+        errorText = 'Ongeldige achternaam';
+    }
 
     return TextField(
         key: const Key('registerForm_lastnameInput_textField'),
@@ -113,7 +129,7 @@ class _LastnameInput extends StatelessWidget {
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           labelText: 'Achternaam',
-          errorText: displayError != null ? 'Ongeldige achternaam' : null,
+          errorText: lastNameError.displayError != null ? errorText : null,
         ),
       );
   }
@@ -122,9 +138,17 @@ class _LastnameInput extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final displayError = context.select(
-      (RegisterBloc bloc) => bloc.state.email.displayError,
+    final emailError = context.select(
+      (RegisterBloc bloc) => bloc.state.email,
     );
+
+    String? errorText;
+    switch (emailError.error) {
+      case EmailValidationError.empty:
+        errorText = 'E-mailadres mag niet leeg zijn';
+      default:
+        errorText = 'Ongeldig e-mailadres';
+    }
 
     return TextField(
         key: const Key('registerForm_emailInput_textField'),
@@ -135,7 +159,7 @@ class _EmailInput extends StatelessWidget {
           border: const OutlineInputBorder(),
           labelText: 'E-mailadres',
           hintText: 'voorbeeld@email.com',
-          errorText: displayError != null ? 'Ongeldig e-mailadres' : null,
+          errorText: emailError.displayError != null ? errorText : null,
         ),
       );
   }
@@ -144,9 +168,17 @@ class _EmailInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final displayError = context.select(
-      (RegisterBloc bloc) => bloc.state.password.displayError,
+    final passwordError = context.select(
+      (RegisterBloc bloc) => bloc.state.password,
     );
+
+    String? errorText;
+    switch (passwordError.error) {
+      case PasswordValidationError.empty:
+        errorText = 'Wachtwoord mag niet leeg zijn';
+      default:
+        errorText = 'Ongeldig wachtwoord';
+    }
 
     return TextField(
         key: const Key('registerForm_passwordInput_textField'),
@@ -158,7 +190,7 @@ class _PasswordInput extends StatelessWidget {
           border: const OutlineInputBorder(),
           labelText: 'Wachtwoord',
           hintText: '*********',
-          errorText: displayError != null ? 'Ongeldig wachtwoord' : null,
+          errorText: passwordError.displayError != null ? errorText : null,
         ),
       );
   }

@@ -10,7 +10,8 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _UserProfileHeader(),
@@ -26,6 +27,7 @@ class ProfileView extends StatelessWidget {
             )
           ],
         ),
+      ),
     );
   }
 }
@@ -44,7 +46,7 @@ class _UserProfileHeader extends StatelessWidget {
     initials += lastName.isNotEmpty ? lastName[0] : '';
 
     return SizedBox(
-      height: 300,
+      height: 275,
         child: Stack(
           alignment: Alignment.topCenter,
           children: [
@@ -80,7 +82,7 @@ class _UserProfileHeader extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const ProfileEditPage()), 
+                            MaterialPageRoute(builder: (context) => const ProfileUpdatePage()), 
                           );
                         },
                         child: Container(
@@ -190,6 +192,10 @@ class _EditButton extends StatelessWidget {
             foregroundColor: white,
           ),
         onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfileUpdatePasswordPage()), 
+          );
         },
         child: const Text('Wachtwoord wijzigen'),
       ),
