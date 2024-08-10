@@ -17,6 +17,7 @@ class AuthenticationBloc
         _userRepository = userRepository,
         super(const AuthenticationState.unknown()) {
     on<AuthenticationSubscriptionRequested>(_onSubscriptionRequested);
+    on<AuthenticationUserUpdated>(_onUserUpdated);
     on<AuthenticationLogoutPressed>(_onLogoutPressed);
   }
 
@@ -46,6 +47,15 @@ class AuthenticationBloc
       },
       onError: addError,
     );
+  }
+
+  void _onUserUpdated(
+    AuthenticationUserUpdated event,
+    Emitter<AuthenticationState> emit,
+  ) {
+    return emit(state.copyWith(
+      user: event.user,
+    ));
   }
 
   void _onLogoutPressed(

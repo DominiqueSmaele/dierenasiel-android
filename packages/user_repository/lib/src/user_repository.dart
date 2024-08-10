@@ -41,4 +41,46 @@ class UserRepository {
       throw e;
     }
   }
+
+  Future<User> updateUser({
+    required String firstname,
+    required String lastname,
+    required String email,
+  }) async {
+    try {
+      final url = Uri.parse('${dotenv.env['API']}/user');
+      final token = await storage.read(key: 'token');
+
+      final response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(<String, String>{
+          'firstname': firstname,
+          'lastname': lastname,
+          'email': email,
+        }),
+      );
+
+      final jsonResponse = jsonDecode(response.body);
+      final data = jsonResponse['data'] as Map<String, dynamic>;
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to retrieve user...');
+      }
+
+      return _user = User(
+        id: data['id'] as int,
+        firstname: data['firstname'] as String,
+        lastname: data['lastname'] as String,
+        email: data['email'] as String,
+      );
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
 }

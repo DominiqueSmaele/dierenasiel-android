@@ -17,7 +17,7 @@ class AnimalListItem extends StatelessWidget {
   return ClipRRect(
     borderRadius: BorderRadius.circular(16.0), // Apply rounded corners to the container
     child: Container(
-      color: Colors.grey[200], // Background color for the container
+      color: white, // Background color for the container
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

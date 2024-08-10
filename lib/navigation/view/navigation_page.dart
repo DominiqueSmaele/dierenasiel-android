@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/helper/constants.dart';
 import 'package:dierenasiel_android/navigation/navigation.dart';
 import 'package:dierenasiel_android/animals/animals.dart';
+import 'package:dierenasiel_android/profile/profile.dart';
 
 class NavigationPage extends StatelessWidget {
   const NavigationPage({super.key});
 
   static const List<Widget> _widgetOptions = <Widget>[
     AnimalsPage(),
-    Text('Profile Page'),
+    ProfilePage(),
   ];
 
 
