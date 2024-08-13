@@ -7,6 +7,7 @@ import 'package:dierenasiel_android/login/login.dart';
 import 'package:dierenasiel_android/splash/splash.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:dierenasiel_android/helper/theme.dart';
+import 'package:animal_repository/animal_repository.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -18,12 +19,14 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   late final AuthenticationRepository _authenticationRepository;
   late final UserRepository _userRepository;
+  late final AnimalRepository _animalRepository;
 
   @override
   void initState() {
     super.initState();
     _authenticationRepository = AuthenticationRepository();
     _userRepository = UserRepository();
+    _animalRepository = AnimalRepository();
   }
 
   @override
@@ -34,8 +37,12 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: _authenticationRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: _authenticationRepository),
+        RepositoryProvider.value(value: _userRepository),
+        RepositoryProvider.value(value: _animalRepository),
+      ],
       child: BlocProvider(
         lazy: false,
         create: (_) => AuthenticationBloc(

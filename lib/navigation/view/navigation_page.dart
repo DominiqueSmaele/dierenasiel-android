@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/helper/constants.dart';
 import 'package:dierenasiel_android/navigation/navigation.dart';
+import 'package:dierenasiel_android/animals/animals.dart';
 
 class NavigationPage extends StatelessWidget {
   const NavigationPage({super.key});
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Text('Home Page'),
+    AnimalsPage(),
     Text('Profile Page'),
   ];
 
@@ -44,7 +45,7 @@ class NavigationPage extends StatelessWidget {
                   NavigationDestination(
                     icon: Icon(Icons.person_outlined),
                     selectedIcon: Icon(Icons.person),
-                    label: 'Profile',
+                    label: 'Profiel',
                   ),
                 ],
                 selectedIndex: state.index,

@@ -7,6 +7,8 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const NavigationPage();
+    return const Scaffold(
+      body: NavigationPage(),
+    );
   }
 }
