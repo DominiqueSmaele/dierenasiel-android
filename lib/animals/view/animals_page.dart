@@ -10,7 +10,7 @@ class AnimalsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
-        create: (_) => AnimalBloc(
+        create: (context) => AnimalBloc(
           animalRepository: context.read<AnimalRepository>(),
         )..add(AnimalFetched()),
         child: const AnimalsList(),
