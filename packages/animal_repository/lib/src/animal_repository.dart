@@ -41,7 +41,8 @@ class AnimalRepository {
 
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
-      return AnimalResponse.fromJson(jsonResponse);
+      final animals = AnimalResponse.fromJson(jsonResponse);
+      return animals;
     } catch (e) {
       throw e;
     }
