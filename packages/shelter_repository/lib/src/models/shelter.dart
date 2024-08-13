@@ -12,7 +12,7 @@ final class Shelter extends Equatable {
     this.instagram,
     this.tiktok,
     required this.address,
-    required this.image,
+    this.image,
   });
 
   final int id;
@@ -23,7 +23,7 @@ final class Shelter extends Equatable {
   final String? instagram;
   final String? tiktok;
   final Address address;
-  final Media image;
+  final Media? image;
 
   factory Shelter.fromJson(Map<String, dynamic> json) {
     return Shelter(
@@ -35,7 +35,7 @@ final class Shelter extends Equatable {
       instagram: json['instagram'] as String?,
       tiktok: json['tiktok'] as String?,
       address: Address.fromJson(json['address'] as Map<String, dynamic>),
-      image: Media.fromJson(json['image'] as Map<String, dynamic>),
+      image: json['image'] != null ? Media.fromJson(json['image'] as Map<String, dynamic>) : null,
     );
   }
 
