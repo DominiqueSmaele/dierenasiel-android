@@ -58,7 +58,7 @@ class _LogoAndAppNameField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Image.asset(
-          'images/logo.png',
+          'assets/logo.png',
           width: 150,
           height: 150,
         ),
@@ -91,7 +91,9 @@ class _EmailInput extends StatelessWidget {
         errorText = 'Ongeldig e-mailadres';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('loginForm_emailInput_textField'),
         onChanged: (email) {
           context.read<LoginBloc>().add(LoginEmailChanged(email));
@@ -102,7 +104,8 @@ class _EmailInput extends StatelessWidget {
           hintText: 'voorbeeld@email.com',
           errorText: emailError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -121,7 +124,9 @@ class _PasswordInput extends StatelessWidget {
         errorText = 'Ongeldig wachtwoord';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('loginForm_passwordInput_textField'),
         onChanged: (password) {
           context.read<LoginBloc>().add(LoginPasswordChanged(password));
@@ -133,7 +138,8 @@ class _PasswordInput extends StatelessWidget {
           hintText: '*********',
           errorText: passwordError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -148,9 +154,10 @@ class _LoginButton extends StatelessWidget {
 
     final isValid = context.select((LoginBloc bloc) => bloc.state.isValid);
 
-    return SizedBox(
+    return Container(
       width: double.infinity,
       height: 40,
+      constraints: const BoxConstraints(maxWidth: 500),
       child: ElevatedButton(
         key: const Key('loginForm_continue_raisedButton'),
         style: ElevatedButton.styleFrom(

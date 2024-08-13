@@ -8,6 +8,7 @@ import 'package:dierenasiel_android/splash/splash.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:dierenasiel_android/helper/theme.dart';
 import 'package:animal_repository/animal_repository.dart';
+import 'package:flutter/services.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -69,9 +70,14 @@ class _AppViewState extends State<AppView> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       navigatorKey: _navigatorKey,
       theme: customTheme,
+      debugShowCheckedModeBanner: false,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {

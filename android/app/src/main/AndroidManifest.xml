@@ -4,6 +4,7 @@
     <application
         android:label="Dierenasielen BE"
         android:name="${applicationName}"
+        android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

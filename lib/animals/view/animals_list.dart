@@ -30,6 +30,8 @@ class AnimalsListState extends State<AnimalsList> {
 
 @override
 Widget build(BuildContext context) {
+  double screenHeight = MediaQuery.of(context).size.height;
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -82,16 +84,17 @@ Widget build(BuildContext context) {
 
                       return GridView.builder(
                         padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 16.0,
                           mainAxisSpacing: 16.0,
-                          childAspectRatio: 0.7,
+                          mainAxisExtent: screenHeight * 0.3
                         ),
                         itemBuilder: (BuildContext context, int index) {
                           return index >= displayAnimals.length
                               ? const BottomLoader()
                               : AnimalListItem(animal: displayAnimals[index]);
+
                         },
                         itemCount: state.hasReachedMax
                             ? displayAnimals.length

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dierenasiel_android/helper/constants.dart';
 import 'package:animal_repository/animal_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,8 +11,7 @@ class AnimalListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uri = Uri.parse(animal.image.original.url);
-    final imageUrl = '${dotenv.env['WEB']}${uri.path.substring(uri.path.indexOf('/storage'))}';
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () {
@@ -32,11 +30,11 @@ class AnimalListItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CachedNetworkImage(
-                imageUrl: imageUrl,
+                imageUrl: animal.image.original.url,
                 placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
                 fit: BoxFit.cover,
-                height: 175.0,
+                height: screenHeight * 0.2,
                 width: double.infinity,
               ),
               Padding(

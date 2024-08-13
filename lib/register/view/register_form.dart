@@ -16,9 +16,12 @@ class RegisterForm extends StatelessWidget {
           ScaffoldMessenger.of(context) 
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(
+              SnackBar(
                 backgroundColor: errorColor,
-                content: Text('Authentication Failure'),
+                content: Text(state.error.isNotEmpty
+                ? state.error
+                : 'Authenticatie fout...'
+              ),
                 showCloseIcon: true,
               ),
             );
@@ -59,7 +62,7 @@ class _LogoAndAppNameField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Image.asset(
-          'images/logo.png',
+          'assets/logo.png',
           width: 150,
           height: 150,
         ),
@@ -92,7 +95,9 @@ class _FirstnameInput extends StatelessWidget {
         errorText = 'Ongeldige voornaam';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('registerForm_firstnameInput_textField'),
         onChanged: (firstname) {
           context.read<RegisterBloc>().add(RegisterFirstnameChanged(firstname));
@@ -102,7 +107,8 @@ class _FirstnameInput extends StatelessWidget {
           labelText: 'Voornaam',
           errorText: firstNameError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -121,7 +127,9 @@ class _LastnameInput extends StatelessWidget {
         errorText = 'Ongeldige achternaam';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('registerForm_lastnameInput_textField'),
         onChanged: (lastname) {
           context.read<RegisterBloc>().add(RegisterLastnameChanged(lastname));
@@ -131,7 +139,8 @@ class _LastnameInput extends StatelessWidget {
           labelText: 'Achternaam',
           errorText: lastNameError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -150,7 +159,9 @@ class _EmailInput extends StatelessWidget {
         errorText = 'Ongeldig e-mailadres';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('registerForm_emailInput_textField'),
         onChanged: (email) {
           context.read<RegisterBloc>().add(RegisterEmailChanged(email));
@@ -161,7 +172,8 @@ class _EmailInput extends StatelessWidget {
           hintText: 'voorbeeld@email.com',
           errorText: emailError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -180,7 +192,9 @@ class _PasswordInput extends StatelessWidget {
         errorText = 'Ongeldig wachtwoord';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('registerForm_passwordInput_textField'),
         onChanged: (password) {
           context.read<RegisterBloc>().add(RegisterPasswordChanged(password));
@@ -192,7 +206,8 @@ class _PasswordInput extends StatelessWidget {
           hintText: '*********',
           errorText: passwordError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -207,7 +222,8 @@ class _RegisterButton extends StatelessWidget {
 
     final isValid = context.select((RegisterBloc bloc) => bloc.state.isValid);
 
-    return SizedBox(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
       width: double.infinity,
       height: 40,
       child: ElevatedButton(

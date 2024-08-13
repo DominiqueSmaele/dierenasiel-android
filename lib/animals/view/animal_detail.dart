@@ -14,16 +14,13 @@ class AnimalDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animalUri = Uri.parse(animal.image.original.url);
-    final animalImageUrl ='${dotenv.env['WEB']}${animalUri.path.substring(animalUri.path.indexOf('/storage'))}';
-
     String shelterImageUrl;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     if (animal.shelter.image == null) {
       shelterImageUrl = '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
     } else {
-      final shelterUri = Uri.parse(animal.shelter.image!.original.url);
-      shelterImageUrl = '${dotenv.env['WEB']}${shelterUri.path.substring(shelterUri.path.indexOf('/storage'))}';
+      shelterImageUrl = animal.shelter.image!.original.url;
     }
 
     final List<Quality> sortedAnimalQualities = List.from(animal.qualities);
@@ -34,12 +31,12 @@ class AnimalDetail extends StatelessWidget {
       child: Stack(
         children: [
           CachedNetworkImage(
-            imageUrl: animalImageUrl,
+            imageUrl: animal.image.original.url,
             placeholder: (context, url) =>
                 const Center(child: CircularProgressIndicator()),
             errorWidget: (context, url, error) => const Icon(Icons.error),
             fit: BoxFit.cover,
-            height: 500, // Image height
+            height: screenHeight * 0.6,
             width: double.infinity,
           ),
           Positioned(

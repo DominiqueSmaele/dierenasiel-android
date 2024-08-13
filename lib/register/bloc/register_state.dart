@@ -8,6 +8,7 @@ final class RegisterState extends Equatable {
     this.email = const Email.pure(),
     this.password = const Password.pure(),
     this.isValid = false,
+    this.error = '',
   });
 
   final FormzSubmissionStatus status;
@@ -16,6 +17,7 @@ final class RegisterState extends Equatable {
   final Email email;
   final Password password;
   final bool isValid;
+  final String error;
 
   RegisterState copyWith({
     FormzSubmissionStatus? status,
@@ -24,6 +26,7 @@ final class RegisterState extends Equatable {
     Email? email,
     Password? password,
     bool? isValid,
+    String? error,
   }) {
     return RegisterState(
       status: status ?? this.status,
@@ -32,6 +35,7 @@ final class RegisterState extends Equatable {
       email: email ?? this.email,
       password: password ?? this.password,
       isValid: isValid ?? this.isValid,
+      error: error ?? this.error,
     );
   }
 

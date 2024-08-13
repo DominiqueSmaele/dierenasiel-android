@@ -21,7 +21,7 @@ class AnimalRepository {
         if (query != null) 'q': query,
       };
       
-      final url = Uri.parse(dotenv.env['WEB'] ?? '').replace(path: '/api/animals', queryParameters: parameters);
+      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/animals', queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
