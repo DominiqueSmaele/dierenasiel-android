@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dierenasiel_android/authentication/authentication.dart';
+import 'package:dierenasiel_android/navigation/bloc/navigation_bloc.dart';
+import 'package:dierenasiel_android/home/home.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -11,40 +12,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [_UserId(), _LogoutButton()],
-        ),
-      ),
+    return BlocProvider(
+      create: (_) => NavigationBloc(),
+      child: const HomeView(),
     );
   }
 }
 
-class _LogoutButton extends StatelessWidget {
-  const _LogoutButton();
 
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      child: const Text('Logout'),
-      onPressed: () {
-        context.read<AuthenticationBloc>().add(AuthenticationLogoutPressed());
-      },
-    );
-  }
-}
 
-class _UserId extends StatelessWidget {
-  const _UserId();
-
-  @override
-  Widget build(BuildContext context) {
-    final user = context.select(
-      (AuthenticationBloc bloc) => bloc.state.user,
-    );
-
-    return Text('UserID: ${user.id}, Email: ${user.email}');
-  }
-}

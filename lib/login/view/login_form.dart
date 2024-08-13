@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/login/login.dart';
+import 'package:dierenasiel_android/helper/constants.dart';
 import 'package:dierenasiel_android/register/view/register_page.dart';
 import 'package:formz/formz.dart';
 
@@ -16,7 +17,7 @@ class LoginForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               const SnackBar(
-                backgroundColor: Color(0xFFD32f2f),
+                backgroundColor: errorColor,
                 content: Text('Authentication Failure'),
                 showCloseIcon: true,
               ),
@@ -64,7 +65,7 @@ class _LogoAndAppNameField extends StatelessWidget {
           style: const TextStyle( 
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF736ACC),
+            color: primaryColor,
           ),
         ),
       ],
@@ -134,8 +135,8 @@ class _LoginButton extends StatelessWidget {
       child: ElevatedButton(
         key: const Key('loginForm_continue_raisedButton'),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF736ACC),
-          foregroundColor: Colors.white,
+          backgroundColor: primaryColor,
+          foregroundColor: white,
         ),
         onPressed: isValid
             ? () => context.read<LoginBloc>().add(const LoginSubmitted())
