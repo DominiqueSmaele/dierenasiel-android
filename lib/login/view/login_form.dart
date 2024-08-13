@@ -16,9 +16,12 @@ class LoginForm extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(
+              SnackBar(
                 backgroundColor: errorColor,
-                content: Text('Authentication Failure'),
+                content: Text(state.error.isNotEmpty
+                ? state.error
+                : 'Authenticatie fout...'
+              ),
                 showCloseIcon: true,
               ),
             );
@@ -76,9 +79,17 @@ class _LogoAndAppNameField extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final displayError = context.select(
-      (LoginBloc bloc) => bloc.state.email.displayError,
+    final emailError = context.select(
+      (LoginBloc bloc) => bloc.state.email,
     );
+
+    String? errorText;
+    switch (emailError.error) {
+      case EmailValidationError.empty:
+        errorText = 'E-mailadres mag niet leeg zijn';
+      default:
+        errorText = 'Ongeldig e-mailadres';
+    }
 
     return TextField(
         key: const Key('loginForm_emailInput_textField'),
@@ -89,7 +100,7 @@ class _EmailInput extends StatelessWidget {
           border: const OutlineInputBorder(),
           labelText: 'E-mailadres',
           hintText: 'voorbeeld@email.com',
-          errorText: displayError != null ? 'Ongeldig e-mailadres' : null,
+          errorText: emailError.displayError != null ? errorText : null,
         ),
       );
   }
@@ -98,9 +109,17 @@ class _EmailInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final displayError = context.select(
-      (LoginBloc bloc) => bloc.state.password.displayError,
+    final passwordError = context.select(
+      (LoginBloc bloc) => bloc.state.password,
     );
+
+    String? errorText;
+    switch (passwordError.error) {
+      case PasswordValidationError.empty:
+        errorText = 'Wachtwoord mag niet leeg zijn';
+      default:
+        errorText = 'Ongeldig wachtwoord';
+    }
 
     return TextField(
         key: const Key('loginForm_passwordInput_textField'),
@@ -112,7 +131,7 @@ class _PasswordInput extends StatelessWidget {
           border: const OutlineInputBorder(),
           labelText: 'Wachtwoord',
           hintText: '*********',
-          errorText: displayError != null ? 'Ongeldig wachtwoord' : null,
+          errorText: passwordError.displayError != null ? errorText : null,
         ),
       );
   }

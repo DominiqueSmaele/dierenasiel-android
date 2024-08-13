@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -35,15 +36,13 @@ class AuthenticationRepository {
           }),
         );
 
-        final data = jsonDecode(response.body);
+        final jsonResponse = jsonDecode(response.body);
 
         if (response.statusCode != 200) {
-          final errorMessage = data['error'] ?? 'Unknown error occurred';
-
-          throw Exception(errorMessage);
+          throw ApiException(jsonResponse['message'] ?? '');
         }
 
-        await storage.write(key: 'token', value: data['token']);
+        await storage.write(key: 'token', value: jsonResponse['token']);
 
         _controller.add(AuthenticationStatus.authenticated);
       } catch (e) {
@@ -74,15 +73,13 @@ class AuthenticationRepository {
         }),
       );
 
-      final data = jsonDecode(response.body);
+      final jsonResponse = jsonDecode(response.body);
 
-      if (response.statusCode != 201) {
-        final errorMessage = data['error'] ?? 'Unknown error occurred';
+        if (response.statusCode != 201) {
+          throw ApiException(jsonResponse['message'] ?? '');
+        }
 
-        throw Exception(errorMessage);
-      }
-
-      await storage.write(key: 'token', value: data['token']);
+      await storage.write(key: 'token', value: jsonResponse['token']);
 
       _controller.add(AuthenticationStatus.authenticated);
     } catch (e) {

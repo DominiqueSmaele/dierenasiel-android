@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dierenasiel_android/helper/constants.dart';
 import 'package:dierenasiel_android/animals/animals.dart';
 import 'package:dierenasiel_android/animals/widgets/widgets.dart';
 
@@ -13,6 +14,7 @@ class AnimalsList extends StatefulWidget {
 }
 
 class AnimalsListState extends State<AnimalsList> {
+  final TextEditingController _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _debounceDuration = const Duration(milliseconds: 300);
   Timer? _debounce;
@@ -23,6 +25,7 @@ class AnimalsListState extends State<AnimalsList> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _searchController.addListener(_onTextChanged);
   }
 
 @override
@@ -36,13 +39,28 @@ Widget build(BuildContext context) {
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 64.0, 16.0, 16.0),
             child: SearchBar(
-              focusNode: _searchFocusNode, // Attach the focus node
+              controller: _searchController,
+              focusNode: _searchFocusNode,
               padding: const WidgetStatePropertyAll<EdgeInsets>(
                 EdgeInsets.symmetric(horizontal: 16.0),
               ),
-              leading: const Icon(Icons.search),
+              leading: const Icon(
+                Icons.search,
+                color: primaryColor,
+              ),
               hintText: 'Zoeken',
               onChanged: _onSearchChanged,
+              trailing: _searchController.text.isNotEmpty
+                  ? [
+                      IconButton(
+                        onPressed: _clearSearch,
+                        icon: const Icon(
+                          Icons.close,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ]
+                  : null,
             ),
           ),
           Expanded(
@@ -52,14 +70,14 @@ Widget build(BuildContext context) {
                 builder: (context, state) {
                   switch (state.status) {
                     case AnimalStatus.failure:
-                      return const Center(child: Text('Failed to fetch animals...'));
+                      return const Center(child: Text('Het ophalen van dieren is mislukt...'));
                     case AnimalStatus.success:
                       final displayAnimals = state.filteredAnimals.isNotEmpty
                           ? state.filteredAnimals
                           : state.animals;
 
                       if (displayAnimals.isEmpty) {
-                        return const Center(child: Text('No animals found'));
+                        return const Center(child: Text('Geen dieren gevonden...'));
                       }
 
                       return GridView.builder(
@@ -79,6 +97,7 @@ Widget build(BuildContext context) {
                             ? displayAnimals.length
                             : displayAnimals.length + 1,
                         controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
                       );
                     case AnimalStatus.initial:
                       return const Center(child: CircularProgressIndicator());
@@ -99,6 +118,9 @@ Widget build(BuildContext context) {
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
+    _searchController
+      ..removeListener(_onTextChanged)
+      ..dispose();
     super.dispose();
   }
 
@@ -118,6 +140,19 @@ Widget build(BuildContext context) {
         context.read<AnimalBloc>().add(AnimalSearched(query));
       }
     });
+  }
+
+  void _onTextChanged() {
+    setState(() {});
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    _onSearchChanged(''); // Clear search results if necessary
+  }
+
+  void _onTest() {
+
   }
 
   bool get _isBottom {

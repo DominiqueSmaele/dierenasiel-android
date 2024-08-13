@@ -1,12 +1,13 @@
-part of 'profile_edit_bloc.dart';
+part of 'update_bloc.dart';
 
-final class ProfileEditState extends Equatable {
-  const ProfileEditState({
+final class ProfileUpdateState extends Equatable {
+  const ProfileUpdateState({
     this.status = FormzSubmissionStatus.initial,
     this.firstname = const Firstname.pure(),
     this.lastname = const Lastname.pure(),
     this.email = const Email.pure(),
     this.isValid = false,
+    this.error = '',
   });
 
   final FormzSubmissionStatus status;
@@ -14,20 +15,23 @@ final class ProfileEditState extends Equatable {
   final Lastname lastname;
   final Email email;
   final bool isValid;
+  final String error;
 
-  ProfileEditState copyWith({
+  ProfileUpdateState copyWith({
     FormzSubmissionStatus? status,
     Firstname? firstname,
     Lastname? lastname,
     Email? email,
     bool? isValid,
+    String? error,
   }) {
-    return ProfileEditState(
+    return ProfileUpdateState(
       status: status ?? this.status,
       firstname: firstname ?? this.firstname,
       lastname: lastname ?? this.lastname,
       email: email ?? this.email,
       isValid: isValid ?? this.isValid,
+      error: error ?? this.error,
     );
   }
 

@@ -30,10 +30,13 @@ environment:
 dependencies:
   authentication_repository:
     path: packages/authentication_repository
+  user_repository:
+    path: packages/user_repository
+  animal_repository:
+    path: packages/animal_repository
   bloc: ^8.1.0
   flutter:
     sdk: flutter
-
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -43,17 +46,11 @@ dependencies:
   flutter_bloc: ^8.1.6
   formz: ^0.6.0
   equatable: ^2.0.5
-  user_repository:
-    path: packages/user_repository
-  animal_repository:
-    path: packages/animal_repository
   flutter_dotenv: ^5.1.0
   flutter_secure_storage: ^9.2.2
-  hexcolor: ^3.0.1
   stream_transform: ^2.1.0
   bloc_concurrency: ^0.2.5
   cached_network_image: ^3.4.0
-  extended_image: ^8.1.1
 
 dev_dependencies:
   flutter_test:

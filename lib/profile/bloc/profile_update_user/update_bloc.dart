@@ -7,27 +7,26 @@ import 'package:formz/formz.dart';
 import 'package:dierenasiel_android/profile/profile.dart';
 import 'package:user_repository/user_repository.dart';
 
+part 'update_event.dart';
+part 'update_state.dart';
 
-part 'profile_edit_event.dart';
-part 'profile_edit_state.dart';
-
-class ProfileEditBloc extends Bloc<ProfileEditEvent, ProfileEditState> {
-  ProfileEditBloc({
+class ProfileUpdateBloc extends Bloc<ProfileUpdateEvent, ProfileUpdateState> {
+  ProfileUpdateBloc({
     required UserRepository userRepository, 
     required AuthenticationBloc authenticationBloc,
     required User user
   }) : 
     _userRepository = userRepository,
     _authenticationBloc = authenticationBloc,
-    super(ProfileEditState(
+    super(ProfileUpdateState(
           firstname: Firstname.dirty(user.firstname),
           lastname: Lastname.dirty(user.lastname),
           email: Email.dirty(user.email),
         )) {
-    on<ProfileEditFirstnameChanged>(_onFirstnameChanged);
-    on<ProfileEditLastnameChanged>(_onLastnameChanged);
-    on<ProfileEditEmailChanged>(_onEmailChanged);
-    on<ProfileEditSubmitted>(_onProfileEditSubmitted);
+    on<ProfileUpdateFirstnameChanged>(_onFirstnameChanged);
+    on<ProfileUpdateLastnameChanged>(_onLastnameChanged);
+    on<ProfileUpdateEmailChanged>(_onEmailChanged);
+    on<ProfileUpdateSubmitted>(_onSubmitted);
 
   }
 
@@ -35,22 +34,22 @@ class ProfileEditBloc extends Bloc<ProfileEditEvent, ProfileEditState> {
   final AuthenticationBloc _authenticationBloc;
 
   void _onFirstnameChanged(
-    ProfileEditFirstnameChanged event,
-    Emitter<ProfileEditState> emit,
+    ProfileUpdateFirstnameChanged event,
+    Emitter<ProfileUpdateState> emit,
   ) {
     final firstname = Firstname.dirty(event.firstname);
     emit(
       state.copyWith(
         firstname: firstname,
         status: FormzSubmissionStatus.initial,
-        isValid: Formz.validate([firstname]),
+        isValid: Formz.validate([firstname, state.lastname, state.email]),
       ),
     );
   }
 
   void _onLastnameChanged(
-    ProfileEditLastnameChanged event,
-    Emitter<ProfileEditState> emit,
+    ProfileUpdateLastnameChanged event,
+    Emitter<ProfileUpdateState> emit,
   ) {
     final lastname = Lastname.dirty(event.lastname);
 
@@ -58,28 +57,28 @@ class ProfileEditBloc extends Bloc<ProfileEditEvent, ProfileEditState> {
       state.copyWith(
         lastname: lastname,
         status: FormzSubmissionStatus.initial,
-        isValid: Formz.validate([lastname]),
+        isValid: Formz.validate([state.firstname, lastname, state.email]),
       ),
     );
   }
 
   void _onEmailChanged(
-    ProfileEditEmailChanged event,
-    Emitter<ProfileEditState> emit,
+    ProfileUpdateEmailChanged event,
+    Emitter<ProfileUpdateState> emit,
   ) {
     final email = Email.dirty(event.email);
     emit(
       state.copyWith(
         email: email,
         status: FormzSubmissionStatus.initial,
-        isValid: Formz.validate([email]),
+        isValid: Formz.validate([state.firstname, state.lastname, email]),
       ),
     );
   }
 
-  Future<void> _onProfileEditSubmitted(
-    ProfileEditSubmitted event,
-    Emitter<ProfileEditState> emit,
+  Future<void> _onSubmitted(
+    ProfileUpdateSubmitted event,
+    Emitter<ProfileUpdateState> emit,
   ) async {
     if (state.isValid) {
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
@@ -93,9 +92,11 @@ class ProfileEditBloc extends Bloc<ProfileEditEvent, ProfileEditState> {
         _authenticationBloc.add(AuthenticationUserUpdated(user));
 
         emit(state.copyWith(status: FormzSubmissionStatus.success));
-      } catch (_) {
-        print(_);
-        emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      } catch (e) {
+        emit(state.copyWith(
+          status: FormzSubmissionStatus.failure,
+          error: e.toString(),
+        ));
       }
     }
   }
