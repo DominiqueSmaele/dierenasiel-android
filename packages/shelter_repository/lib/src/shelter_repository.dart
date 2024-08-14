@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:animal_repository/animal_repository.dart';
+import 'package:shelter_repository/shelter_repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class AnimalRepository {
+class ShelterRepository {
   final storage = const FlutterSecureStorage();
 
-  Future<AnimalResponse> getAnimals({
+  Future<ShelterResponse> getShelters({
     required int perPage,
     String? cursor,
   }) async {
@@ -17,8 +17,8 @@ class AnimalRepository {
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
       };
-      
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/animals', queryParameters: parameters);
+
+      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/shelters', queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -38,13 +38,13 @@ class AnimalRepository {
 
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
-      return AnimalResponse.fromJson(jsonResponse);
+      return ShelterResponse.fromJson(jsonResponse);
     } catch (e) {
       throw e;
     }
   }
 
-  Future<AnimalResponse> searchAnimals({
+  Future<ShelterResponse> searchShelters({
     required int perPage,
     String? cursor,
     String? query
@@ -56,7 +56,7 @@ class AnimalRepository {
         if (query != null) 'q': query,
       };
       
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/animals', queryParameters: parameters);
+      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/shelters', queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -76,7 +76,7 @@ class AnimalRepository {
 
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
-      return AnimalResponse.fromJson(jsonResponse);
+      return ShelterResponse.fromJson(jsonResponse);
     } catch (e) {
       throw e;
     }

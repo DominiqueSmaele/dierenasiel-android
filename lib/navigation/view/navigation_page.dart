@@ -4,12 +4,14 @@ import 'package:dierenasiel_android/helper/constants.dart';
 import 'package:dierenasiel_android/navigation/navigation.dart';
 import 'package:dierenasiel_android/animals/animals.dart';
 import 'package:dierenasiel_android/profile/profile.dart';
+import 'package:dierenasiel_android/shelters/shelters.dart';
 
 class NavigationPage extends StatelessWidget {
   const NavigationPage({super.key});
 
   static const List<Widget> _widgetOptions = <Widget>[
     AnimalsPage(),
+    SheltersPage(),
     ProfilePage(),
   ];
 
@@ -42,6 +44,11 @@ class NavigationPage extends StatelessWidget {
                     icon: Icon(Icons.home_outlined),
                     selectedIcon: Icon(Icons.home),
                     label: 'Home',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.business_outlined),
+                    selectedIcon: Icon(Icons.business),
+                    label: 'Dierenasielen',
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.person_outlined),

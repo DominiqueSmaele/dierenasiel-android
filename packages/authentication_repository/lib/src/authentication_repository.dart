@@ -42,8 +42,6 @@ class AuthenticationRepository {
           throw ApiException(jsonResponse['message'] ?? '');
         }
 
-        print(jsonResponse['token']);
-
         await storage.write(key: 'token', value: jsonResponse['token']);
 
         _controller.add(AuthenticationStatus.authenticated);
@@ -80,8 +78,6 @@ class AuthenticationRepository {
         if (response.statusCode != 201) {
           throw ApiException(jsonResponse['message'] ?? '');
         }
-
-      print(jsonResponse['token']);
 
       await storage.write(key: 'token', value: jsonResponse['token']);
 

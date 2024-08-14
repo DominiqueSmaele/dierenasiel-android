@@ -3,17 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/helper/constants.dart';
-import 'package:dierenasiel_android/animals/animals.dart';
-import 'package:dierenasiel_android/animals/widgets/widgets.dart';
+import 'package:dierenasiel_android/shelters/shelters.dart';
+import 'package:dierenasiel_android/shelters/widgets/widgets.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class AnimalsList extends StatefulWidget {
-  const AnimalsList({super.key});
+
+class SheltersList extends StatefulWidget {
+  const SheltersList({super.key});
 
   @override
-  State<AnimalsList> createState() => AnimalsListState();
+  State<SheltersList> createState() => SheltersListState();
 }
 
-class AnimalsListState extends State<AnimalsList> {
+class SheltersListState extends State<SheltersList> {
   final TextEditingController _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _debounceDuration = const Duration(milliseconds: 300);
@@ -28,9 +30,9 @@ class AnimalsListState extends State<AnimalsList> {
     _searchController.addListener(_onTextChanged);
   }
 
-@override
-Widget build(BuildContext context) {
-  double screenHeight = MediaQuery.of(context).size.height;
+  @override
+  Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () {
@@ -53,61 +55,57 @@ Widget build(BuildContext context) {
               hintText: 'Zoeken',
               onChanged: _onSearchChanged,
               trailing: _searchController.text.isNotEmpty
-                  ? [
-                      IconButton(
-                        onPressed: _clearSearch,
-                        icon: const Icon(
-                          Icons.close,
-                          color: primaryColor,
-                        ),
-                      ),
-                    ]
-                  : null,
+                ? [
+                  IconButton(
+                    onPressed: _clearSearch,
+                    icon: const Icon(
+                      Icons.close,
+                      color: primaryColor,
+                    ),
+                  ),
+                ]
+              : null,
             ),
           ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _onRefresh,
-              child: BlocBuilder<AnimalBloc, AnimalState>(
+              child: BlocBuilder<ShelterBloc, ShelterState>(
                 builder: (context, state) {
                   switch (state.status) {
-                    case AnimalStatus.failure:
-                      return const Center(child: Text('Het ophalen van dieren is mislukt...'));
-                    case AnimalStatus.success:
-                      final displayAnimals = state.filteredAnimals.isNotEmpty
-                          ? state.filteredAnimals
-                          : state.animals;
+                    case ShelterStatus.failure:
+                      return const Center(child: Text('Het ophalen van dierenasielen is mislukt...'));
+                    case ShelterStatus.success:
+                      final displayShelters = state.filteredShelters.isNotEmpty
+                        ? state.filteredShelters
+                        : state.shelters;
 
-                      if (displayAnimals.isEmpty) {
-                        return const Center(child: Text('Geen dieren gevonden...'));
+                      if (displayShelters.isEmpty) {
+                        return const Center(child: Text('Geen dierenasielen gevonden...'));
                       }
 
-                      return GridView.builder(
+                      return MasonryGridView.count(
                         padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.0,
-                          mainAxisSpacing: 16.0,
-                          mainAxisExtent: screenHeight * 0.3
-                        ),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16.0,
+                        crossAxisSpacing: 16.0,
                         itemBuilder: (BuildContext context, int index) {
-                          return index >= displayAnimals.length
-                              ? const BottomLoader()
-                              : AnimalListItem(animal: displayAnimals[index]);
-
+                          return index >= displayShelters.length
+                            ? const BottomLoader()
+                            : ShelterListItem(shelter: displayShelters[index]);
                         },
                         itemCount: state.hasReachedMax
-                            ? displayAnimals.length
-                            : displayAnimals.length + 1,
+                          ? displayShelters.length
+                          : displayShelters.length + 1,
                         controller: _scrollController,
                         physics: const AlwaysScrollableScrollPhysics(),
                       );
-                    case AnimalStatus.initial:
+                    case ShelterStatus.initial:
                       return const Center(child: CircularProgressIndicator());
-                    case AnimalStatus.refresh:
+                    case ShelterStatus.refresh:
                       return const Center(child: CircularProgressIndicator());
                   }
-                },
+                }
               ),
             ),
           ),
@@ -125,10 +123,10 @@ Widget build(BuildContext context) {
       ..removeListener(_onTextChanged)
       ..dispose();
     super.dispose();
-  }
+  }  
 
   void _onScroll() {
-    if (_isBottom) context.read<AnimalBloc>().add(AnimalFetched());
+    if (_isBottom) context.read<ShelterBloc>().add(ShelterFetched());
   }
 
   void _onSearchChanged(String query) {
@@ -137,10 +135,10 @@ Widget build(BuildContext context) {
     _debounce = Timer(_debounceDuration, () {
       if (query.isEmpty) {
         // If the query is empty, show all animals
-        context.read<AnimalBloc>().add(AnimalClearSearched());
+        context.read<ShelterBloc>().add(ShelterClearSearched());
       } else {
         // Trigger search with the current query
-        context.read<AnimalBloc>().add(AnimalSearched(query));
+        context.read<ShelterBloc>().add(ShelterSearched(query));
       }
     });
   }
@@ -162,6 +160,6 @@ Widget build(BuildContext context) {
   }
 
   Future<void> _onRefresh() async {
-    context.read<AnimalBloc>().add(AnimalRefreshed());
+    context.read<ShelterBloc>().add(ShelterRefreshed());
   }
 }

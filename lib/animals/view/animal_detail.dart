@@ -78,6 +78,7 @@ class AnimalDetail extends StatelessWidget {
                         Text(
                           animal.name,
                           style: const TextStyle(
+                            overflow: TextOverflow.ellipsis,
                             color: primaryColor,
                             fontSize: 28.0,
                             fontWeight: FontWeight.bold,
@@ -86,6 +87,7 @@ class AnimalDetail extends StatelessWidget {
                         Text(
                           animal.race ?? 'Onbekend ras',
                           style: const TextStyle(
+                            overflow: TextOverflow.ellipsis,
                             color: textColor,
                             fontSize: 18.0,
                             fontWeight: FontWeight.normal,
