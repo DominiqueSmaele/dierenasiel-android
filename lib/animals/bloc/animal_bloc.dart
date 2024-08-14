@@ -48,7 +48,7 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
     if (state.hasReachedMax) return;
     
     try {
-      if (state.status == AnimalStatus.initial || state.status == AnimalStatus.loading) {
+      if (state.status == AnimalStatus.initial || state.status == AnimalStatus.refresh) {
         final response = await _animalRepository.getAnimals(perPage: animalLimit);
 
         cursor = response.meta['next_cursor'];
@@ -84,10 +84,10 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
 
   Future<void> _onAnimalRefreshed(AnimalRefreshed event, Emitter<AnimalState> emit) async {
     cursor = null;
-  
+
     emit(
       state.copyWith(
-        status: AnimalStatus.loading,
+        status: AnimalStatus.refresh,
         animals: [],
         filteredAnimals: [],
         hasReachedMax: false,
@@ -103,7 +103,7 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
     final query = event.query.toLowerCase();
 
     try {
-      final response = await _animalRepository.getAnimals(perPage: animalLimit, cursor: filterCursor, query: query);
+      final response = await _animalRepository.searchAnimals(perPage: animalLimit, cursor: filterCursor, query: query);
 
       filterCursor = response.meta['next_cursor'];
 

@@ -1,6 +1,6 @@
 part of 'animal_bloc.dart';
 
-enum AnimalStatus { initial, success, failure, loading }
+enum AnimalStatus { initial, success, failure, refresh }
 
 final class AnimalState extends Equatable {
   const AnimalState({
@@ -20,6 +20,7 @@ final class AnimalState extends Equatable {
     List<Animal>? animals,
     List<Animal>? filteredAnimals,
     bool? hasReachedMax,
+    bool? refresh,
   }) {
     return AnimalState(
       status: status ?? this.status,

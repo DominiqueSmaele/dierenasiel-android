@@ -168,7 +168,12 @@ class _UserInfoField extends StatelessWidget {
     return ListTile(
       leading: Icon(icon, color: primaryColor),
       title: Text(label),
-      subtitle: Text(value),
+      subtitle: Text(
+        value,
+        style: const TextStyle(
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
       tileColor: white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),

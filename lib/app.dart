@@ -9,6 +9,7 @@ import 'package:user_repository/user_repository.dart';
 import 'package:dierenasiel_android/helper/theme.dart';
 import 'package:animal_repository/animal_repository.dart';
 import 'package:flutter/services.dart';
+import 'package:shelter_repository/shelter_repository.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -21,6 +22,7 @@ class _AppState extends State<App> {
   late final AuthenticationRepository _authenticationRepository;
   late final UserRepository _userRepository;
   late final AnimalRepository _animalRepository;
+  late final ShelterRepository _shelterRepository;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _AppState extends State<App> {
     _authenticationRepository = AuthenticationRepository();
     _userRepository = UserRepository();
     _animalRepository = AnimalRepository();
+    _shelterRepository = ShelterRepository();
   }
 
   @override
@@ -43,6 +46,7 @@ class _AppState extends State<App> {
         RepositoryProvider.value(value: _authenticationRepository),
         RepositoryProvider.value(value: _userRepository),
         RepositoryProvider.value(value: _animalRepository),
+        RepositoryProvider.value(value: _shelterRepository),
       ],
       child: BlocProvider(
         lazy: false,

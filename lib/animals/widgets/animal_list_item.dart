@@ -67,6 +67,7 @@ class AnimalListItem extends StatelessWidget {
                 child: Text(
                   animal.race ?? 'Onbekend',
                   style: const TextStyle(
+                    overflow: TextOverflow.ellipsis,
                     fontSize: 13.0,
                     fontWeight: FontWeight.normal,
                   ),
