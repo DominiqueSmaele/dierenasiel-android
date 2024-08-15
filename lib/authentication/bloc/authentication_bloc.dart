@@ -17,6 +17,7 @@ class AuthenticationBloc
         _userRepository = userRepository,
         super(const AuthenticationState.unknown()) {
     on<AuthenticationSubscriptionRequested>(_onSubscriptionRequested);
+    on<AuthenticationVerifyUser>(_onVerifyUser);
     on<AuthenticationUserUpdated>(_onUserUpdated);
     on<AuthenticationLogoutPressed>(_onLogoutPressed);
   }
@@ -36,17 +37,34 @@ class AuthenticationBloc
             return emit(const AuthenticationState.unauthenticated());
           case AuthenticationStatus.authenticated:
             final user = await _tryGetUser();
+
             return emit(
               user != null
                   ? AuthenticationState.authenticated(user)
                   : const AuthenticationState.unauthenticated(),
             );
+
           case AuthenticationStatus.unknown:
             return emit(const AuthenticationState.unknown());
         }
       },
       onError: addError,
     );
+  }
+
+  void _onVerifyUser(
+    AuthenticationVerifyUser event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    try {
+      final user = await _userRepository.getUser(verify: true);
+
+      if (user == null) {
+        _authenticationRepository.logOut();
+      }
+    } catch (e) {
+      _authenticationRepository.logOut();
+    }
   }
 
   void _onUserUpdated(

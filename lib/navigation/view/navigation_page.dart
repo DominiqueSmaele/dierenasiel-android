@@ -41,17 +41,26 @@ class NavigationPage extends StatelessWidget {
               child: NavigationBar(
                 destinations: const <Widget>[
                   NavigationDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home),
-                    label: 'Home',
+                    icon: Icon(
+                      Icons.pets,
+                      color: primaryColor,
+                    ),
+                    selectedIcon: Icon(Icons.pets),
+                    label: 'Dieren',
                   ),
                   NavigationDestination(
-                    icon: Icon(Icons.business_outlined),
+                    icon: Icon(
+                      Icons.business,
+                      color: primaryColor,
+                    ),
                     selectedIcon: Icon(Icons.business),
-                    label: 'Dierenasielen',
+                    label: 'Asielen',
                   ),
                   NavigationDestination(
-                    icon: Icon(Icons.person_outlined),
+                    icon: Icon(
+                      Icons.person,
+                      color: primaryColor,
+                    ),
                     selectedIcon: Icon(Icons.person),
                     label: 'Profiel',
                   ),

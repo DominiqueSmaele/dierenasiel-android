@@ -176,7 +176,7 @@ class _UserInfoField extends StatelessWidget {
       ),
       tileColor: white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(16),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5), 
     );

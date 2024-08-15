@@ -53,6 +53,16 @@ class AnimalResponse extends Equatable {
     return DateFormat('yyyy-MM-dd').parse(dateOfBirth);
   }
 
+  AnimalResponse copyWith({
+    List<Animal>? animals,
+    Map<String, dynamic>? meta,
+  }) {
+    return AnimalResponse(
+      animals: animals ?? this.animals,
+      meta: meta ?? this.meta,
+    );
+  }
+
   @override
   List<Object?> get props => [animals, meta];
 }

@@ -25,6 +25,16 @@ class ShelterResponse extends Equatable {
     ); 
   }
 
+  ShelterResponse copyWith({
+    List<Shelter>? shelters,
+    Map<String, dynamic>? meta,
+  }) {
+    return ShelterResponse(
+      shelters: shelters ?? this.shelters,
+      meta: meta ?? this.meta,
+    );
+  }
+
   @override
   List<Object?> get props => [shelters, meta];
 }
