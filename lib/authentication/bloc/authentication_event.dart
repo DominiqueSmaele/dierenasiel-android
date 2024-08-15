@@ -6,6 +6,8 @@ sealed class AuthenticationEvent {
 
 final class AuthenticationSubscriptionRequested extends AuthenticationEvent {}
 
+final class AuthenticationVerifyUser extends AuthenticationEvent {}
+
 final class AuthenticationUserUpdated extends AuthenticationEvent {
   const AuthenticationUserUpdated(this.user);
 

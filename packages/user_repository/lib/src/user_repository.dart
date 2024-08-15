@@ -9,8 +9,10 @@ class UserRepository {
   final storage = new FlutterSecureStorage();
   User? _user;
 
-  Future<User?> getUser() async {
-    if (_user != null) return _user;
+  Future<User?> getUser({
+    bool verify = false,
+  }) async {
+    if (_user != null && !verify) return _user;
 
     try {
       final url = Uri.parse('${dotenv.env['API']}/user/current');

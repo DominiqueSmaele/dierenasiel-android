@@ -10,7 +10,7 @@ part 'animal_event.dart';
 part 'animal_state.dart';
 
 const throttleDuration = Duration(milliseconds: 100);
-const animalLimit = 12;
+const animalLimit = 6;
 const refreshDelay = Duration(milliseconds: 500);
 const cooldownDuration = Duration(seconds: 10);
 String? cursor;
@@ -62,7 +62,7 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
         );
       }
 
-      final response = await _animalRepository.getAnimals(perPage: animalLimit, cursor: cursor);
+      final response = await _animalRepository.getAnimals(perPage: animalLimit, cursor: cursor, refresh: true);
 
       cursor = response.meta['next_cursor'];
 
@@ -70,7 +70,7 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
         emit(
           state.copyWith(
             status: AnimalStatus.success,
-            animals: List.of(state.animals)..addAll(response.animals!),
+            animals: response.animals,
             hasReachedMax: cursor == null,
           ),
         );
@@ -84,6 +84,8 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
 
   Future<void> _onAnimalRefreshed(AnimalRefreshed event, Emitter<AnimalState> emit) async {
     cursor = null;
+
+    _animalRepository.clearCachedAnimals();
 
     emit(
       state.copyWith(
@@ -104,6 +106,10 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
 
     try {
       final response = await _animalRepository.searchAnimals(perPage: animalLimit, cursor: filterCursor, query: query);
+
+      if (response.animals!.isEmpty) {
+        return emit(state.copyWith(status: AnimalStatus.notFound));
+      }
 
       filterCursor = response.meta['next_cursor'];
 

@@ -7,12 +7,16 @@ import 'dart:convert';
 
 class ShelterRepository {
   final storage = const FlutterSecureStorage();
+  ShelterResponse _cachedShelters = ShelterResponse(shelters: [], meta: {});
 
   Future<ShelterResponse> getShelters({
     required int perPage,
     String? cursor,
+    bool refresh = false,
   }) async {
     try {
+      if (_cachedShelters.shelters!.isNotEmpty && !refresh) return _cachedShelters;
+
       final parameters = <String, String>{
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
@@ -30,15 +34,23 @@ class ShelterRepository {
         },
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200) {  
         final jsonResponse = jsonDecode(response.body);
 
         throw ApiException(jsonResponse['message'] ?? '');
       }
 
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      final shelterResponse = ShelterResponse.fromJson(jsonResponse);
 
-      return ShelterResponse.fromJson(jsonResponse);
+      if (_cachedShelters.shelters!.isNotEmpty) {
+        return _cachedShelters = _cachedShelters.copyWith(
+          shelters: List.of(_cachedShelters.shelters!)..addAll(shelterResponse.shelters!),
+          meta: shelterResponse.meta,
+        );
+      }
+
+      return _cachedShelters = shelterResponse;
     } catch (e) {
       throw e;
     }
@@ -68,7 +80,7 @@ class ShelterRepository {
         },
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200) {  
         final jsonResponse = jsonDecode(response.body);
 
         throw ApiException(jsonResponse['message'] ?? '');
@@ -80,5 +92,9 @@ class ShelterRepository {
     } catch (e) {
       throw e;
     }
+  }
+
+  void clearCachedShelters() {
+    _cachedShelters = ShelterResponse(shelters: [], meta: {});
   }
 }

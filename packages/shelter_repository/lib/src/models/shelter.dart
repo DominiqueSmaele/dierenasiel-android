@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:shelter_repository/src/models/address.dart';
 import 'package:shelter_repository/src/models/media.dart';
+import 'package:shelter_repository/src/models/opening_period.dart';
 
 final class Shelter extends Equatable {
   const Shelter({
@@ -13,6 +14,7 @@ final class Shelter extends Equatable {
     this.tiktok,
     required this.address,
     this.image,
+    this.openingPeriods,
   });
 
   final int id;
@@ -24,6 +26,7 @@ final class Shelter extends Equatable {
   final String? tiktok;
   final Address address;
   final Media? image;
+  final List<OpeningPeriod>? openingPeriods;
 
   factory Shelter.fromJson(Map<String, dynamic> json) {
     return Shelter(
@@ -36,9 +39,12 @@ final class Shelter extends Equatable {
       tiktok: json['tiktok'] as String?,
       address: Address.fromJson(json['address'] as Map<String, dynamic>),
       image: json['image'] != null ? Media.fromJson(json['image'] as Map<String, dynamic>) : null,
+      openingPeriods: json['opening_periods'] != null ? (json['opening_periods'] as List<dynamic>?)
+          ?.map((dynamic openingPeriod) => OpeningPeriod.fromJson(openingPeriod as Map<String, dynamic>))
+          .toList() : [],
     );
   }
 
   @override
-  List<Object?> get props => [id, name, email, phone, facebook, instagram, tiktok, address, image];
+  List<Object?> get props => [id, name, email, phone, facebook, instagram, tiktok, address, image, openingPeriods];
 }

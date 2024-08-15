@@ -1,5 +1,6 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/authentication/authentication.dart';
 import 'package:dierenasiel_android/home/home.dart';
@@ -8,7 +9,6 @@ import 'package:dierenasiel_android/splash/splash.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:dierenasiel_android/helper/theme.dart';
 import 'package:animal_repository/animal_repository.dart';
-import 'package:flutter/services.dart';
 import 'package:shelter_repository/shelter_repository.dart';
 
 class App extends StatefulWidget {
@@ -67,10 +67,34 @@ class AppView extends StatefulWidget {
   State<AppView> createState() => _AppViewState();
 }
 
-class _AppViewState extends State<AppView> {
+class _AppViewState extends State<AppView> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _checkAuthentication();
+    }
+  }
+
+  void _checkAuthentication() {
+    context.read<AuthenticationBloc>().add(AuthenticationVerifyUser());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +102,7 @@ class _AppViewState extends State<AppView> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     return MaterialApp(
       navigatorKey: _navigatorKey,
       theme: customTheme,

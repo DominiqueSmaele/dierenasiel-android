@@ -32,8 +32,6 @@ class SheltersListState extends State<SheltersList> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -75,6 +73,8 @@ class SheltersListState extends State<SheltersList> {
                   switch (state.status) {
                     case ShelterStatus.failure:
                       return const Center(child: Text('Het ophalen van dierenasielen is mislukt...'));
+                    case ShelterStatus.notFound:
+                      return const Center(child: Text('Geen dierenasielen gevonden...'));
                     case ShelterStatus.success:
                       final displayShelters = state.filteredShelters.isNotEmpty
                         ? state.filteredShelters
@@ -160,6 +160,7 @@ class SheltersListState extends State<SheltersList> {
   }
 
   Future<void> _onRefresh() async {
+    _searchController.clear();
     context.read<ShelterBloc>().add(ShelterRefreshed());
   }
 }

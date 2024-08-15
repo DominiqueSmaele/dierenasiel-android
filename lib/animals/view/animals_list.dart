@@ -73,6 +73,8 @@ Widget build(BuildContext context) {
                   switch (state.status) {
                     case AnimalStatus.failure:
                       return const Center(child: Text('Het ophalen van dieren is mislukt...'));
+                    case AnimalStatus.notFound:
+                      return const Center(child: Text('Geen dieren gevonden...'));
                     case AnimalStatus.success:
                       final displayAnimals = state.filteredAnimals.isNotEmpty
                           ? state.filteredAnimals
@@ -136,10 +138,8 @@ Widget build(BuildContext context) {
 
     _debounce = Timer(_debounceDuration, () {
       if (query.isEmpty) {
-        // If the query is empty, show all animals
         context.read<AnimalBloc>().add(AnimalClearSearched());
       } else {
-        // Trigger search with the current query
         context.read<AnimalBloc>().add(AnimalSearched(query));
       }
     });
@@ -151,17 +151,18 @@ Widget build(BuildContext context) {
 
   void _clearSearch() {
     _searchController.clear();
-    _onSearchChanged(''); // Clear search results if necessary
+    _onSearchChanged('');
   }
 
   bool get _isBottom {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
+    return currentScroll >= (maxScroll * 0.6);
   }
 
   Future<void> _onRefresh() async {
+    _searchController.clear();
     context.read<AnimalBloc>().add(AnimalRefreshed());
   }
 }

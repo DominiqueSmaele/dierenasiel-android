@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dierenasiel_android/helper/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animal_repository/animal_repository.dart';
-import 'package:quality_repository/src/models/models.dart';
+import 'package:quality_repository/quality_repository.dart';
+import 'package:dierenasiel_android/shelters/shelters.dart';
 import 'package:string_capitalize/string_capitalize.dart';
 
 class AnimalDetail extends StatelessWidget {
@@ -16,6 +18,7 @@ class AnimalDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     String shelterImageUrl;
     double screenHeight = MediaQuery.of(context).size.height;
+    double statusBarHeight = MediaQuery.of(context).viewPadding.top;
 
     if (animal.shelter.image == null) {
       shelterImageUrl = '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
@@ -40,7 +43,7 @@ class AnimalDetail extends StatelessWidget {
             width: double.infinity,
           ),
           Positioned(
-            top: 32.0,
+            top: statusBarHeight + 16.0,
             left: 24.0,
             child: Container(
               decoration: const BoxDecoration(
@@ -71,7 +74,7 @@ class AnimalDetail extends StatelessWidget {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Padding(
-                    padding: const EdgeInsets.all(32.0),
+                    padding: const EdgeInsets.all(24.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -217,78 +220,93 @@ class AnimalDetail extends StatelessWidget {
                           ), 
                         ),
                         const SizedBox(height: 25.0),
-
-                        Stack(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(24.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                        GestureDetector(
+                          onTap: () {
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) => ShelterAnimalBloc(
+                                    shelter: animal.shelter,
+                                    animalRepository: context.read<AnimalRepository>(),
+                                  )..add(ShelterAnimalFetched()),
+                                  child: ShelterDetail(shelter: animal.shelter),
+                                ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  RichText(
-                                    text: TextSpan(
-                                      style: const TextStyle(
-                                        fontSize: 21.0,
+                            );
+                          },
+                          child: Stack(
+                            children: [ 
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(24.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 21.0,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: animal.name,
+                                            style: const TextStyle(
+                                              color: primaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const TextSpan(
+                                            text: ' verblijft momenteel in...',
+                                            style: TextStyle(
+                                              color: textColor,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      children: [
-                                        TextSpan(
-                                          text: animal.name,
-                                          style: const TextStyle(
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const TextSpan(
-                                          text: ' verblijft momenteel in...',
-                                          style: TextStyle(
-                                            color: textColor,
-                                          ),
-                                        ),
-                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(height: 25.0),
-                                  Center(
-                                    child: Column(
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl: shelterImageUrl,
-                                          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                                          fit: BoxFit.cover,
-                                          height: 125.0,
-                                          width: 125.0,
-                                        ),
-                                        const SizedBox(height: 10.0),
-                                        Text(
-                                          animal.shelter.name,
-                                          style: const TextStyle(
-                                            color: textColor,
-                                            fontSize: 21.0,
-                                            fontWeight: FontWeight.bold,
+                                    const SizedBox(height: 25.0),
+                                    Center(
+                                      child: Column(
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl: shelterImageUrl,
+                                            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                                            fit: BoxFit.cover,
+                                            height: 125.0,
+                                            width: 125.0,
                                           ),
-                                        )
-                                      ],
+                                          const SizedBox(height: 10.0),
+                                          Text(
+                                            animal.shelter.name,
+                                            style: const TextStyle(
+                                              color: textColor,
+                                              fontSize: 21.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ), 
-                                ], 
-                              ),  
-                            ),
-                            const Positioned(
-                              bottom: 12.5,
-                              right: 12.5,
-                              child: Icon(
-                                Icons.open_in_new, // or any icon that suits your design
-                                color: primaryColor,
-                                size: 16.0,
+                                  ], 
+                                ),
                               ),
-                            ),
-                          ],
+                              const Positioned(
+                                bottom: 15,
+                                right: 15,
+                                child: Icon(
+                                  Icons.open_in_new, // or any icon that suits your design
+                                  color: primaryColor,
+                                  size: 16.0,
+                                ),
+                              ), 
+                            ],
+                          ),  
                         ),
                       ],
                     ),
