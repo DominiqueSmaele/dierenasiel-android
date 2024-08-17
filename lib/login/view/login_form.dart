@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/login/login.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:dierenasiel_android/register/view/register_page.dart';
 import 'package:formz/formz.dart';
 
@@ -19,9 +19,8 @@ class LoginForm extends StatelessWidget {
               SnackBar(
                 backgroundColor: errorColor,
                 content: Text(state.error.isNotEmpty
-                ? state.error
-                : 'Authenticatie fout...'
-              ),
+                    ? state.error
+                    : 'Authenticatie fout...'),
                 showCloseIcon: true,
               ),
             );
@@ -58,14 +57,14 @@ class _LogoAndAppNameField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Image.asset(
-          'images/logo.png',
+          'assets/logo.png',
           width: 150,
           height: 150,
         ),
         Text(
           'Dierenasielen\nBelgië'.toUpperCase(),
           textAlign: TextAlign.center,
-          style: const TextStyle( 
+          style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
             color: primaryColor,
@@ -91,7 +90,9 @@ class _EmailInput extends StatelessWidget {
         errorText = 'Ongeldig e-mailadres';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('loginForm_emailInput_textField'),
         onChanged: (email) {
           context.read<LoginBloc>().add(LoginEmailChanged(email));
@@ -102,7 +103,8 @@ class _EmailInput extends StatelessWidget {
           hintText: 'voorbeeld@email.com',
           errorText: emailError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -121,7 +123,9 @@ class _PasswordInput extends StatelessWidget {
         errorText = 'Ongeldig wachtwoord';
     }
 
-    return TextField(
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: TextField(
         key: const Key('loginForm_passwordInput_textField'),
         onChanged: (password) {
           context.read<LoginBloc>().add(LoginPasswordChanged(password));
@@ -133,7 +137,8 @@ class _PasswordInput extends StatelessWidget {
           hintText: '*********',
           errorText: passwordError.displayError != null ? errorText : null,
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -148,9 +153,10 @@ class _LoginButton extends StatelessWidget {
 
     final isValid = context.select((LoginBloc bloc) => bloc.state.isValid);
 
-    return SizedBox(
+    return Container(
       width: double.infinity,
       height: 40,
+      constraints: const BoxConstraints(maxWidth: 500),
       child: ElevatedButton(
         key: const Key('loginForm_continue_raisedButton'),
         style: ElevatedButton.styleFrom(
@@ -167,32 +173,31 @@ class _LoginButton extends StatelessWidget {
 }
 
 class _SignUpField extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Nog geen account?'),
-          TextButton(
-            key: const Key('loginForm_signUp_textButton'),
-            style: ButtonStyle(
-              overlayColor: WidgetStateProperty.all(Colors.transparent),
-              padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(5)),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RegisterPage()),
-              );
-            },
-            child: const Text(
-              'Meld aan',
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Nog geen account?'),
+        TextButton(
+          key: const Key('loginForm_signUp_textButton'),
+          style: ButtonStyle(
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+            padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                const EdgeInsets.all(5)),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RegisterPage()),
+            );
+          },
+          child: const Text('Meld aan',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-              )
-            ),
-          ),
-        ],
-      );
-    }
+              )),
+        ),
+      ],
+    );
+  }
 }

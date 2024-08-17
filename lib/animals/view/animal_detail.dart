@@ -1,11 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animal_repository/animal_repository.dart';
-import 'package:quality_repository/src/models/models.dart';
+import 'package:quality_repository/quality_repository.dart';
+import 'package:dierenasiel_android/shelters/shelters.dart';
 import 'package:string_capitalize/string_capitalize.dart';
+import 'package:type_repository/type_repository.dart';
 
 class AnimalDetail extends StatelessWidget {
   const AnimalDetail({required this.animal, super.key});
@@ -14,16 +16,15 @@ class AnimalDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animalUri = Uri.parse(animal.image.original.url);
-    final animalImageUrl ='${dotenv.env['WEB']}${animalUri.path.substring(animalUri.path.indexOf('/storage'))}';
-
     String shelterImageUrl;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double statusBarHeight = MediaQuery.of(context).viewPadding.top;
 
     if (animal.shelter.image == null) {
-      shelterImageUrl = '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
+      shelterImageUrl =
+          '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
     } else {
-      final shelterUri = Uri.parse(animal.shelter.image!.original.url);
-      shelterImageUrl = '${dotenv.env['WEB']}${shelterUri.path.substring(shelterUri.path.indexOf('/storage'))}';
+      shelterImageUrl = animal.shelter.image!.original.url;
     }
 
     final List<Quality> sortedAnimalQualities = List.from(animal.qualities);
@@ -34,16 +35,16 @@ class AnimalDetail extends StatelessWidget {
       child: Stack(
         children: [
           CachedNetworkImage(
-            imageUrl: animalImageUrl,
+            imageUrl: animal.image.original.url,
             placeholder: (context, url) =>
                 const Center(child: CircularProgressIndicator()),
             errorWidget: (context, url, error) => const Icon(Icons.error),
             fit: BoxFit.cover,
-            height: 500, // Image height
+            height: screenHeight * 0.6,
             width: double.infinity,
           ),
           Positioned(
-            top: 32.0,
+            top: statusBarHeight + 16.0,
             left: 24.0,
             child: Container(
               decoration: const BoxDecoration(
@@ -59,9 +60,9 @@ class AnimalDetail extends StatelessWidget {
             ),
           ),
           DraggableScrollableSheet(
-            initialChildSize: 0.5, // Initial size of the draggable area
-            minChildSize: 0.5,     // Minimum size when collapsed
-            maxChildSize: 0.7,     // Maximum size when expanded
+            initialChildSize: 0.5,
+            minChildSize: 0.5,
+            maxChildSize: 0.7,
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: const BoxDecoration(
@@ -74,13 +75,14 @@ class AnimalDetail extends StatelessWidget {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Padding(
-                    padding: const EdgeInsets.all(32.0),
+                    padding: const EdgeInsets.all(24.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           animal.name,
                           style: const TextStyle(
+                            overflow: TextOverflow.ellipsis,
                             color: primaryColor,
                             fontSize: 28.0,
                             fontWeight: FontWeight.bold,
@@ -89,6 +91,7 @@ class AnimalDetail extends StatelessWidget {
                         Text(
                           animal.race ?? 'Onbekend ras',
                           style: const TextStyle(
+                            overflow: TextOverflow.ellipsis,
                             color: textColor,
                             fontSize: 18.0,
                             fontWeight: FontWeight.normal,
@@ -99,10 +102,10 @@ class AnimalDetail extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 10.0),
+                                  vertical: 8.0, horizontal: 12.0),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(16.0),
                               ),
                               child: Row(
                                 children: [
@@ -126,10 +129,11 @@ class AnimalDetail extends StatelessWidget {
                             ),
                             const SizedBox(width: 12.0),
                             Container(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 12.0),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(16.0),
                               ),
                               child: Row(
                                 children: [
@@ -163,13 +167,14 @@ class AnimalDetail extends StatelessWidget {
                             dividerColor: Colors.transparent,
                           ),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
                             ),
                             child: ExpansionTile(
-                              tilePadding: EdgeInsets.zero, 
+                              tilePadding: EdgeInsets.zero,
                               childrenPadding: EdgeInsets.zero,
                               title: const Text(
                                 'Eigenschappen',
@@ -179,15 +184,15 @@ class AnimalDetail extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-
-                              iconColor: primaryColor, 
-                              collapsedIconColor: primaryColor, 
-                              initiallyExpanded: false, 
+                              iconColor: primaryColor,
+                              collapsedIconColor: primaryColor,
+                              initiallyExpanded: false,
                               children: sortedAnimalQualities.map((quality) {
                                 return Card(
-                                  margin: const EdgeInsets.only(top: 5.0, bottom: 15.0),
+                                  margin: const EdgeInsets.only(
+                                      top: 5.0, bottom: 15.0),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0), // Match the container's border radius
+                                    borderRadius: BorderRadius.circular(16.0),
                                   ),
                                   color: primaryColor,
                                   child: ListTile(
@@ -196,13 +201,13 @@ class AnimalDetail extends StatelessWidget {
                                       quality.value == null
                                           ? Icons.help
                                           : quality.value!
-                                              ? Icons.check_circle 
-                                              : Icons.cancel, 
+                                              ? Icons.check_circle
+                                              : Icons.cancel,
                                       color: quality.value == null
-                                          ? orange 
+                                          ? orange
                                           : quality.value!
-                                              ? green 
-                                              : lightDarkRed, 
+                                              ? green
+                                              : lightDarkRed,
                                     ),
                                     title: Text(
                                       quality.name.capitalize(),
@@ -214,83 +219,108 @@ class AnimalDetail extends StatelessWidget {
                                   ),
                                 );
                               }).toList(),
+                            ),
                           ),
-                          ), 
                         ),
                         const SizedBox(height: 25.0),
-
-                        Stack(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(24.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                settings:
+                                    const RouteSettings(name: '/shelterDetail'),
+                                builder: (context) => BlocProvider(
+                                  create: (context) => ShelterAnimalBloc(
+                                    shelter: animal.shelter,
+                                    animalRepository:
+                                        context.read<AnimalRepository>(),
+                                    typeRepository:
+                                        context.read<TypeRepository>(),
+                                  )..add(ShelterAnimalFetched()),
+                                  child: ShelterDetail(shelter: animal.shelter),
+                                ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  RichText(
-                                    text: TextSpan(
-                                      style: const TextStyle(
-                                        fontSize: 21.0,
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(24.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 21.0,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: animal.name,
+                                            style: const TextStyle(
+                                              color: primaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const TextSpan(
+                                            text: ' verblijft momenteel in...',
+                                            style: TextStyle(
+                                              color: textColor,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      children: [
-                                        TextSpan(
-                                          text: animal.name,
-                                          style: const TextStyle(
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const TextSpan(
-                                          text: ' verblijft momenteel in...',
-                                          style: TextStyle(
-                                            color: textColor,
-                                          ),
-                                        ),
-                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(height: 25.0),
-                                  Center(
-                                    child: Column(
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl: shelterImageUrl,
-                                          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                                          fit: BoxFit.cover,
-                                          height: 125.0,
-                                          width: 125.0,
-                                        ),
-                                        const SizedBox(height: 10.0),
-                                        Text(
-                                          animal.shelter.name,
-                                          style: const TextStyle(
-                                            color: textColor,
-                                            fontSize: 21.0,
-                                            fontWeight: FontWeight.bold,
+                                    const SizedBox(height: 25.0),
+                                    Center(
+                                      child: Column(
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl: shelterImageUrl,
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
+                                            fit: BoxFit.cover,
+                                            height: 125.0,
+                                            width: 125.0,
                                           ),
-                                        )
-                                      ],
+                                          const SizedBox(height: 10.0),
+                                          Text(
+                                            animal.shelter.name,
+                                            style: const TextStyle(
+                                              color: textColor,
+                                              fontSize: 21.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ), 
-                                ], 
-                              ),  
-                            ),
-                            const Positioned(
-                              bottom: 12.5,
-                              right: 12.5,
-                              child: Icon(
-                                Icons.open_in_new, // or any icon that suits your design
-                                color: primaryColor,
-                                size: 16.0,
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                              const Positioned(
+                                bottom: 15,
+                                right: 15,
+                                child: Icon(
+                                  Icons.open_in_new,
+                                  color: primaryColor,
+                                  size: 16.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),

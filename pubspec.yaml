@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -34,8 +34,14 @@ dependencies:
     path: packages/user_repository
   animal_repository:
     path: packages/animal_repository
+  shelter_repository:
+    path: packages/shelter_repository
   quality_repository:
     path: packages/quality_repository
+  timeslot_repository:
+    path: packages/timeslot_repository
+  type_repository:
+    path: packages/type_repository
   bloc: ^8.1.0
   flutter:
     sdk: flutter
@@ -55,10 +61,16 @@ dependencies:
   cached_network_image: ^3.4.0
   intl: ^0.19.0
   string_capitalize: ^0.0.10
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_libphonenumber: ^2.3.0
+  google_maps_flutter: ^2.9.0
+  flutter_svg: ^2.0.10+1
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -67,6 +79,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
   lints: ^3.0.0
+
+flutter_icons:
+  image_path: "assets/app_logo.png"
+  android: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -85,7 +101,9 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
-    - images/logo.png
+    - assets/map_style.json
+    - assets/logo.png
+    - assets/empty.svg
     - .env
 
 

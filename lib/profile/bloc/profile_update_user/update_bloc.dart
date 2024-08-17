@@ -11,14 +11,13 @@ part 'update_event.dart';
 part 'update_state.dart';
 
 class ProfileUpdateBloc extends Bloc<ProfileUpdateEvent, ProfileUpdateState> {
-  ProfileUpdateBloc({
-    required UserRepository userRepository, 
-    required AuthenticationBloc authenticationBloc,
-    required User user
-  }) : 
-    _userRepository = userRepository,
-    _authenticationBloc = authenticationBloc,
-    super(ProfileUpdateState(
+  ProfileUpdateBloc(
+      {required UserRepository userRepository,
+      required AuthenticationBloc authenticationBloc,
+      required User user})
+      : _userRepository = userRepository,
+        _authenticationBloc = authenticationBloc,
+        super(ProfileUpdateState(
           firstname: Firstname.dirty(user.firstname),
           lastname: Lastname.dirty(user.lastname),
           email: Email.dirty(user.email),
@@ -27,7 +26,6 @@ class ProfileUpdateBloc extends Bloc<ProfileUpdateEvent, ProfileUpdateState> {
     on<ProfileUpdateLastnameChanged>(_onLastnameChanged);
     on<ProfileUpdateEmailChanged>(_onEmailChanged);
     on<ProfileUpdateSubmitted>(_onSubmitted);
-
   }
 
   final UserRepository _userRepository;

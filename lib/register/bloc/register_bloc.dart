@@ -10,7 +10,7 @@ part 'register_state.dart';
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc({
     required AuthenticationRepository authenticationRepository,
-  }) : _authenticationRepository = authenticationRepository,
+  })  : _authenticationRepository = authenticationRepository,
         super(const RegisterState()) {
     on<RegisterFirstnameChanged>(_onFirstnameChanged);
     on<RegisterLastnameChanged>(_onLastnameChanged);
@@ -30,7 +30,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       state.copyWith(
         firstname: firstname,
         status: FormzSubmissionStatus.initial,
-        isValid: Formz.validate([firstname, state.lastname, state.email, state.password]),
+        isValid: Formz.validate(
+            [firstname, state.lastname, state.email, state.password]),
       ),
     );
   }
@@ -44,7 +45,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       state.copyWith(
         lastname: lastname,
         status: FormzSubmissionStatus.initial,
-        isValid: Formz.validate([state.firstname, lastname, state.email, state.password]),
+        isValid: Formz.validate(
+            [state.firstname, lastname, state.email, state.password]),
       ),
     );
   }
@@ -58,7 +60,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       state.copyWith(
         email: email,
         status: FormzSubmissionStatus.initial,
-        isValid: Formz.validate([state.firstname, state.lastname, email, state.password]),
+        isValid: Formz.validate(
+            [state.firstname, state.lastname, email, state.password]),
       ),
     );
   }
@@ -72,7 +75,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       state.copyWith(
         password: password,
         status: FormzSubmissionStatus.initial,
-        isValid: Formz.validate([state.firstname, state.lastname, state.email, password]),
+        isValid: Formz.validate(
+            [state.firstname, state.lastname, state.email, password]),
       ),
     );
   }
@@ -91,8 +95,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           password: state.password.value,
         );
         emit(state.copyWith(status: FormzSubmissionStatus.success));
-      } catch (_) {
-        emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      } catch (e) {
+        emit(state.copyWith(
+            status: FormzSubmissionStatus.failure, error: e.toString()));
       }
     }
   }

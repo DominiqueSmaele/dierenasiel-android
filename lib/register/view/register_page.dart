@@ -14,14 +14,13 @@ class RegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: BlocProvider(
-          create: (context) => RegisterBloc(
-            authenticationRepository: context.read<AuthenticationRepository>()
-          ),
-          child: const RegisterForm(),
-        )
-      ),
+          padding: const EdgeInsets.all(24),
+          child: BlocProvider(
+            create: (context) => RegisterBloc(
+                authenticationRepository:
+                    context.read<AuthenticationRepository>()),
+            child: const RegisterForm(),
+          )),
     );
   }
 }

@@ -4,17 +4,22 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:animal_repository/animal_repository.dart';
+import 'package:type_repository/type_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'animal_event.dart';
 part 'animal_state.dart';
 
 const throttleDuration = Duration(milliseconds: 100);
-const animalLimit = 12;
 const refreshDelay = Duration(milliseconds: 500);
-const cooldownDuration = Duration(seconds: 10);
+const cooldownDuration = Duration(seconds: 5);
+
+const animalLimit = 12;
+
 String? cursor;
-String? filterCursor;
+String? searchCursor;
+
+List<Type>? types;
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
   return (events, mapper) {
@@ -23,9 +28,12 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 }
 
 class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
-  AnimalBloc({required AnimalRepository animalRepository}) : 
-    _animalRepository = animalRepository,
-    super(const AnimalState()) {
+  AnimalBloc(
+      {required AnimalRepository animalRepository,
+      required TypeRepository typeRepository})
+      : _animalRepository = animalRepository,
+        _typeRepository = typeRepository,
+        super(const AnimalState()) {
     on<AnimalFetched>(
       _onAnimalFetched,
       transformer: throttleDroppable(throttleDuration),
@@ -37,32 +45,48 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
     on<AnimalSearched>(
       _onAnimalSearched,
     );
+    on<AnimalTypeSelected>(
+      _onAnimalTypeSelected,
+    );
     on<AnimalClearSearched>(
       _onAnimalClearSearched,
     );
   }
 
   final AnimalRepository _animalRepository;
+  final TypeRepository _typeRepository;
 
-  Future<void> _onAnimalFetched(AnimalFetched event, Emitter<AnimalState> emit) async {
+  Future<void> _onAnimalFetched(
+      AnimalFetched event, Emitter<AnimalState> emit) async {
     if (state.hasReachedMax) return;
-    
-    try {
-      if (state.status == AnimalStatus.initial || state.status == AnimalStatus.loading) {
-        final response = await _animalRepository.getAnimals(perPage: animalLimit);
 
-        cursor = response.meta['next_cursor'];
+    try {
+      if (state.status == AnimalStatus.initial ||
+          state.status == AnimalStatus.refresh) {
+        final animalResponse =
+            await _animalRepository.getAnimals(perPage: animalLimit);
+        final typeResponse = await _typeRepository.getTypes();
+
+        if (animalResponse.animals!.isEmpty) {
+          return emit(state.copyWith(status: AnimalStatus.empty));
+        }
+
+        types = typeResponse.types;
+
+        cursor = animalResponse.meta['next_cursor'];
 
         return emit(
           state.copyWith(
             status: AnimalStatus.success,
-            animals: response.animals,
+            animals: animalResponse.animals,
+            types: types,
             hasReachedMax: cursor == null,
           ),
         );
       }
 
-      final response = await _animalRepository.getAnimals(perPage: animalLimit, cursor: cursor);
+      final response = await _animalRepository.getAnimals(
+          perPage: animalLimit, cursor: cursor, refresh: true);
 
       cursor = response.meta['next_cursor'];
 
@@ -70,7 +94,7 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
         emit(
           state.copyWith(
             status: AnimalStatus.success,
-            animals: List.of(state.animals)..addAll(response.animals!),
+            animals: response.animals,
             hasReachedMax: cursor == null,
           ),
         );
@@ -82,15 +106,22 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
     }
   }
 
-  Future<void> _onAnimalRefreshed(AnimalRefreshed event, Emitter<AnimalState> emit) async {
+  Future<void> _onAnimalRefreshed(
+      AnimalRefreshed event, Emitter<AnimalState> emit) async {
     cursor = null;
-  
+    searchCursor = null;
+
+    _animalRepository.clearCachedAnimals();
+
     emit(
       state.copyWith(
-        status: AnimalStatus.loading,
+        status: AnimalStatus.refresh,
         animals: [],
+        searchedAnimals: [],
         filteredAnimals: [],
+        types: [],
         hasReachedMax: false,
+        selectedType: null,
       ),
     );
 
@@ -99,33 +130,113 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
     add(AnimalFetched());
   }
 
-  Future<void> _onAnimalSearched(AnimalSearched event, Emitter<AnimalState> emit) async {
+  Future<void> _onAnimalSearched(
+      AnimalSearched event, Emitter<AnimalState> emit) async {
     final query = event.query.toLowerCase();
 
     try {
-      final response = await _animalRepository.getAnimals(perPage: animalLimit, cursor: filterCursor, query: query);
+      final response = await _animalRepository.searchAnimals(
+          perPage: animalLimit, cursor: searchCursor, query: query);
 
-      filterCursor = response.meta['next_cursor'];
+      if (response.animals!.isEmpty) {
+        return emit(state.copyWith(status: AnimalStatus.notFound));
+      }
+
+      searchCursor = response.meta['next_cursor'];
+
+      if (state.selectedType != null) {
+        List<Animal> filteredAnimals = response.animals!;
+
+        filteredAnimals = filteredAnimals
+            .where((animal) => animal.type.id == state.selectedType)
+            .toList();
+
+        if (filteredAnimals.isEmpty) {
+          return emit(state.copyWith(
+              status: AnimalStatus.notFound,
+              searchedAnimals: response.animals));
+        }
+
+        return emit(
+          state.copyWith(
+            status: AnimalStatus.success,
+            filteredAnimals: filteredAnimals,
+            hasReachedMax: searchCursor == null,
+          ),
+        );
+      }
 
       emit(
         state.copyWith(
           status: AnimalStatus.success,
-          filteredAnimals: response.animals,
-          hasReachedMax: filterCursor == null,
+          searchedAnimals: response.animals,
+          hasReachedMax: searchCursor == null,
         ),
       );
-
     } catch (_) {
       emit(state.copyWith(status: AnimalStatus.failure));
     }
   }
 
-  Future<void> _onAnimalClearSearched(AnimalClearSearched event, Emitter<AnimalState> emit) async {
-    filterCursor = null;
+  void _onAnimalTypeSelected(
+      AnimalTypeSelected event, Emitter<AnimalState> emit) {
+    if (event.typeId == null) {
+      return emit(
+        state.copyWith(
+          status: AnimalStatus.success,
+          filteredAnimals: [],
+          selectedType: null,
+        ),
+      );
+    }
+
+    final filteredAnimals = (state.searchedAnimals.isNotEmpty
+            ? state.searchedAnimals
+            : state.animals)
+        .where((animal) => animal.type.id == event.typeId)
+        .toList();
+
+    if (filteredAnimals.isEmpty) {
+      return emit(state.copyWith(
+          status: AnimalStatus.notFound, selectedType: event.typeId));
+    }
 
     emit(
       state.copyWith(
         status: AnimalStatus.success,
+        filteredAnimals: filteredAnimals,
+        selectedType: event.typeId,
+      ),
+    );
+  }
+
+  Future<void> _onAnimalClearSearched(
+      AnimalClearSearched event, Emitter<AnimalState> emit) async {
+    searchCursor = null;
+
+    if (state.selectedType != null) {
+      final filteredAnimals = state.animals
+          .where((animal) => animal.type.id == state.selectedType)
+          .toList();
+
+      if (filteredAnimals.isEmpty) {
+        return emit(
+            state.copyWith(status: AnimalStatus.notFound, searchedAnimals: []));
+      }
+
+      return emit(
+        state.copyWith(
+          status: AnimalStatus.success,
+          searchedAnimals: [],
+          filteredAnimals: filteredAnimals,
+        ),
+      );
+    }
+
+    emit(
+      state.copyWith(
+        status: AnimalStatus.success,
+        searchedAnimals: [],
         filteredAnimals: [],
         hasReachedMax: cursor == null,
       ),

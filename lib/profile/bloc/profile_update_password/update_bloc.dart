@@ -9,16 +9,16 @@ import 'package:user_repository/user_repository.dart';
 part 'update_event.dart';
 part 'update_state.dart';
 
-class ProfileUpdatePasswordBloc extends Bloc<ProfileUpdatePasswordEvent, ProfileUpdatePasswordState> {
+class ProfileUpdatePasswordBloc
+    extends Bloc<ProfileUpdatePasswordEvent, ProfileUpdatePasswordState> {
   ProfileUpdatePasswordBloc({
     required UserRepository userRepository,
-  }) : 
-    _userRepository = userRepository,
-    super(const ProfileUpdatePasswordState()) {
-      on<ProfileUpdatePasswordChanged>(_onPasswordChanged);
-      on<ProfileUpdateRepeatPasswordChanged>(_onRepeatPasswordChanged);
-      on<ProfileUpdatePasswordSubmitted>(_onSubmitted);
-    }
+  })  : _userRepository = userRepository,
+        super(const ProfileUpdatePasswordState()) {
+    on<ProfileUpdatePasswordChanged>(_onPasswordChanged);
+    on<ProfileUpdateRepeatPasswordChanged>(_onRepeatPasswordChanged);
+    on<ProfileUpdatePasswordSubmitted>(_onSubmitted);
+  }
 
   final UserRepository _userRepository;
 
@@ -42,9 +42,7 @@ class ProfileUpdatePasswordBloc extends Bloc<ProfileUpdatePasswordEvent, Profile
     Emitter<ProfileUpdatePasswordState> emit,
   ) {
     final repeatPassword = PasswordConfirmation.dirty(
-      password: state.password.value,
-      value: event.repeatPassword
-    );
+        password: state.password.value, value: event.repeatPassword);
 
     emit(
       state.copyWith(

@@ -12,7 +12,8 @@ class ProfileUpdatePage extends StatelessWidget {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          final user = context.select((AuthenticationBloc bloc) => bloc.state.user);
+          final user =
+              context.select((AuthenticationBloc bloc) => bloc.state.user);
 
           return BlocProvider(
             create: (context) => ProfileUpdateBloc(

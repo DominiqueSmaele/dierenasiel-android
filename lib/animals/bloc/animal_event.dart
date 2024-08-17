@@ -20,4 +20,13 @@ final class AnimalSearched extends AnimalEvent {
   List<Object?> get props => [query];
 }
 
+final class AnimalTypeSelected extends AnimalEvent {
+  final int? typeId;
+
+  const AnimalTypeSelected(this.typeId);
+
+  @override
+  List<Object?> get props => [typeId];
+}
+
 final class AnimalClearSearched extends AnimalEvent {}

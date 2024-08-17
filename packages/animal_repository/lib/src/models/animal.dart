@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:shelter_repository/shelter_repository.dart';
 import 'package:shelter_repository/src/models/models.dart';
 import 'package:type_repository/src/models/models.dart';
 import 'package:quality_repository/src/models/models.dart';
@@ -28,7 +29,17 @@ final class Animal extends Equatable {
   final Type type;
   final Shelter shelter;
 
-
   @override
-  List<Object?> get props => [id, name, sex, birthDate, race, description, image, qualities, type, shelter];
+  List<Object?> get props => [
+        id,
+        name,
+        sex,
+        birthDate,
+        race,
+        description,
+        image,
+        qualities,
+        type,
+        shelter
+      ];
 }
