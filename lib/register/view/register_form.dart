@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/register/register.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:dierenasiel_android/login/view/login_page.dart';
 import 'package:formz/formz.dart';
 
@@ -11,47 +11,39 @@ class RegisterForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<RegisterBloc, RegisterState>(
-      listener: (context, state) {
-        if (state.status.isFailure) {
-          ScaffoldMessenger.of(context) 
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                backgroundColor: errorColor,
-                content: Text(state.error.isNotEmpty
-                ? state.error
-                : 'Authenticatie fout...'
-              ),
-                showCloseIcon: true,
-              ),
-            );
-        }
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 25),
-                _LogoAndAppNameField(),
-                const SizedBox(height: 30),
-                _FirstnameInput(),
-                const Padding(padding: EdgeInsets.all(16)),
-                _LastnameInput(),
-                const Padding(padding: EdgeInsets.all(16)),
-                _EmailInput(),
-                const Padding(padding: EdgeInsets.all(16)),
-                _PasswordInput(),
-                const Padding(padding: EdgeInsets.all(16)),
-                _RegisterButton(),
-                _LoginField(),
-              ]
-            )
-          )
-        )
-      )
-    );
+        listener: (context, state) {
+          if (state.status.isFailure) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  backgroundColor: errorColor,
+                  content: Text(state.error.isNotEmpty
+                      ? state.error
+                      : 'Authenticatie fout...'),
+                  showCloseIcon: true,
+                ),
+              );
+          }
+        },
+        child: Scaffold(
+            body: SafeArea(
+                child: SingleChildScrollView(
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const SizedBox(height: 25),
+          _LogoAndAppNameField(),
+          const SizedBox(height: 30),
+          _FirstnameInput(),
+          const Padding(padding: EdgeInsets.all(16)),
+          _LastnameInput(),
+          const Padding(padding: EdgeInsets.all(16)),
+          _EmailInput(),
+          const Padding(padding: EdgeInsets.all(16)),
+          _PasswordInput(),
+          const Padding(padding: EdgeInsets.all(16)),
+          _RegisterButton(),
+          _LoginField(),
+        ])))));
   }
 }
 
@@ -69,7 +61,7 @@ class _LogoAndAppNameField extends StatelessWidget {
         Text(
           'Dierenasielen\nBelgië'.toUpperCase(),
           textAlign: TextAlign.center,
-          style: const TextStyle( 
+          style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
             color: primaryColor,
@@ -242,32 +234,31 @@ class _RegisterButton extends StatelessWidget {
 }
 
 class _LoginField extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Heeft u al een account?'),
-          TextButton(
-            key: const Key('registerForm_login_textButton'),
-            style: ButtonStyle(
-              overlayColor: WidgetStateProperty.all(Colors.transparent),
-              padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(5)),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
-            child: const Text(
-              'Log in',
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Heeft u al een account?'),
+        TextButton(
+          key: const Key('registerForm_login_textButton'),
+          style: ButtonStyle(
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+            padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                const EdgeInsets.all(5)),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          },
+          child: const Text('Log in',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-              )
-            ),
-          ),
-        ],
-      );
-    }
+              )),
+        ),
+      ],
+    );
+  }
 }

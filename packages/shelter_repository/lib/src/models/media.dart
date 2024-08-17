@@ -12,9 +12,11 @@ final class Media extends Equatable {
   factory Media.fromJson(Map<String, dynamic> json) {
     return Media(
       original: Original.fromJson(json['original'] as Map<String, dynamic>),
-      conversions: (json['conversions'] as List<dynamic>?)?.map(
-        (item) => Conversion.fromJson(item as Map<String, dynamic>),
-      ).toList(),
+      conversions: (json['conversions'] as List<dynamic>?)
+          ?.map(
+            (item) => Conversion.fromJson(item as Map<String, dynamic>),
+          )
+          .toList(),
     );
   }
 
@@ -47,7 +49,7 @@ class Original extends Equatable {
 
 class Conversion extends Equatable {
   const Conversion({
-    required this.url, 
+    required this.url,
     required this.width,
     required this.height,
   });
@@ -63,7 +65,6 @@ class Conversion extends Equatable {
       height: json['height'] as int,
     );
   }
-
 
   @override
   List<Object> get props => [url, width, height];

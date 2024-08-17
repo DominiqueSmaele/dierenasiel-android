@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:animal_repository/animal_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dierenasiel_android/animals/view/view.dart';
@@ -23,7 +23,7 @@ class AnimalListItem extends StatelessWidget {
         );
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.0), 
+        borderRadius: BorderRadius.circular(16.0),
         child: Container(
           color: white,
           child: Column(
@@ -31,7 +31,8 @@ class AnimalListItem extends StatelessWidget {
             children: [
               CachedNetworkImage(
                 imageUrl: animal.image.original.url,
-                placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
                 fit: BoxFit.cover,
                 height: screenHeight * 0.2,
@@ -55,7 +56,8 @@ class AnimalListItem extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 16.0),
                       child: Icon(
                         animal.sex == 'm' ? Icons.male : Icons.female,
-                        color: animal.sex == 'm' ? Colors.blue : Colors.pink[300],
+                        color:
+                            animal.sex == 'm' ? Colors.blue : Colors.pink[300],
                         size: 21.0,
                       ),
                     ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/animals/animals.dart';
 import 'package:dierenasiel_android/authentication/authentication.dart';
+import 'package:type_repository/type_repository.dart';
 
 class AnimalsPage extends StatefulWidget {
   const AnimalsPage({super.key});
@@ -24,6 +25,7 @@ class AnimalsPageState extends State<AnimalsPage> {
       body: BlocProvider(
         create: (context) => AnimalBloc(
           animalRepository: context.read<AnimalRepository>(),
+          typeRepository: context.read<TypeRepository>(),
         )..add(AnimalFetched()),
         child: const AnimalsList(),
       ),

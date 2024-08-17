@@ -20,8 +20,9 @@ class AnimalResponse extends Equatable {
       final map = item as Map<String, dynamic>;
 
       final qualitiesList = (map['qualities'] as List<dynamic>)
-        .map((dynamic quality) => Quality.fromJson(quality as Map<String, dynamic>))
-        .toList();
+          .map((dynamic quality) =>
+              Quality.fromJson(quality as Map<String, dynamic>))
+          .toList();
 
       return Animal(
         id: map['id'] as int,
@@ -42,7 +43,7 @@ class AnimalResponse extends Equatable {
     return AnimalResponse(
       animals: animalsList,
       meta: meta,
-    ); 
+    );
   }
 
   static DateTime? _convertStringToDatetime(String? dateOfBirth) {

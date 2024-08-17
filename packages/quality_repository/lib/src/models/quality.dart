@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 final class Quality extends Equatable {
   const Quality({
-    required this.id, 
+    required this.id,
     required this.name,
     required this.value,
   });
@@ -20,12 +20,12 @@ final class Quality extends Equatable {
   }
 
   static bool? _convertIntoToBool(int? value) {
-    switch(value) {
+    switch (value) {
       case null:
         return null;
       case 0:
         return false;
-      default: 
+      default:
         return true;
     }
   }

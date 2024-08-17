@@ -15,14 +15,16 @@ class ShelterRepository {
     bool refresh = false,
   }) async {
     try {
-      if (_cachedShelters.shelters!.isNotEmpty && !refresh) return _cachedShelters;
+      if (_cachedShelters.shelters!.isNotEmpty && !refresh)
+        return _cachedShelters;
 
       final parameters = <String, String>{
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
       };
 
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/shelters', queryParameters: parameters);
+      final url = Uri.parse(dotenv.env['API'] ?? '')
+          .replace(path: '/api/shelters', queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -34,7 +36,7 @@ class ShelterRepository {
         },
       );
 
-      if (response.statusCode != 200) {  
+      if (response.statusCode != 200) {
         final jsonResponse = jsonDecode(response.body);
 
         throw ApiException(jsonResponse['message'] ?? '');
@@ -45,7 +47,8 @@ class ShelterRepository {
 
       if (_cachedShelters.shelters!.isNotEmpty) {
         return _cachedShelters = _cachedShelters.copyWith(
-          shelters: List.of(_cachedShelters.shelters!)..addAll(shelterResponse.shelters!),
+          shelters: List.of(_cachedShelters.shelters!)
+            ..addAll(shelterResponse.shelters!),
           meta: shelterResponse.meta,
         );
       }
@@ -56,19 +59,17 @@ class ShelterRepository {
     }
   }
 
-  Future<ShelterResponse> searchShelters({
-    required int perPage,
-    String? cursor,
-    String? query
-  }) async {
+  Future<ShelterResponse> searchShelters(
+      {required int perPage, String? cursor, String? query}) async {
     try {
       final parameters = <String, String>{
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
         if (query != null) 'q': query,
       };
-      
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/shelters', queryParameters: parameters);
+
+      final url = Uri.parse(dotenv.env['API'] ?? '')
+          .replace(path: '/api/shelters', queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -80,7 +81,36 @@ class ShelterRepository {
         },
       );
 
-      if (response.statusCode != 200) {  
+      if (response.statusCode != 200) {
+        final jsonResponse = jsonDecode(response.body);
+
+        throw ApiException(jsonResponse['message'] ?? '');
+      }
+
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+
+      return ShelterResponse.fromJson(jsonResponse);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<ShelterResponse> getSheltersTimeslots() async {
+    try {
+      final url = Uri.parse(dotenv.env['API'] ?? '')
+          .replace(path: '/api/shelters/timeslots');
+      final token = await storage.read(key: 'token');
+
+      final response = await http.get(
+        url,
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Connection': 'Keep-Alive',
+        },
+      );
+
+      if (response.statusCode != 200) {
         final jsonResponse = jsonDecode(response.body);
 
         throw ApiException(jsonResponse['message'] ?? '');

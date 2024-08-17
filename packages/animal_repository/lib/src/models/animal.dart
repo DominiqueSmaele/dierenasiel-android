@@ -30,5 +30,16 @@ final class Animal extends Equatable {
   final Shelter shelter;
 
   @override
-  List<Object?> get props => [id, name, sex, birthDate, race, description, image, qualities, type, shelter];
+  List<Object?> get props => [
+        id,
+        name,
+        sex,
+        birthDate,
+        race,
+        description,
+        image,
+        qualities,
+        type,
+        shelter
+      ];
 }

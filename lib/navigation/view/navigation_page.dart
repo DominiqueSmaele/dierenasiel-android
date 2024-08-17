@@ -1,6 +1,7 @@
+import 'package:dierenasiel_android/timeslots/timeslots.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:dierenasiel_android/navigation/navigation.dart';
 import 'package:dierenasiel_android/animals/animals.dart';
 import 'package:dierenasiel_android/profile/profile.dart';
@@ -12,9 +13,9 @@ class NavigationPage extends StatelessWidget {
   static const List<Widget> _widgetOptions = <Widget>[
     AnimalsPage(),
     SheltersPage(),
+    TimeslotsPage(),
     ProfilePage(),
   ];
-
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +34,12 @@ class NavigationPage extends StatelessWidget {
               color: primaryColor,
               borderRadius: BorderRadius.vertical(top: Radius.circular(32.0)),
               boxShadow: [
-                BoxShadow(color: primaryColor, spreadRadius: 0, blurRadius: 10), 
-              ],            
+                BoxShadow(color: primaryColor, spreadRadius: 0, blurRadius: 10),
+              ],
             ),
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(32.0)), 
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(32.0)),
               child: NavigationBar(
                 destinations: const <Widget>[
                   NavigationDestination(
@@ -58,6 +60,14 @@ class NavigationPage extends StatelessWidget {
                   ),
                   NavigationDestination(
                     icon: Icon(
+                      Icons.calendar_month,
+                      color: primaryColor,
+                    ),
+                    selectedIcon: Icon(Icons.calendar_month),
+                    label: 'Agenda',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(
                       Icons.person,
                       color: primaryColor,
                     ),
@@ -72,7 +82,6 @@ class NavigationPage extends StatelessWidget {
                 },
               ),
             ),
-
           ),
         );
       },

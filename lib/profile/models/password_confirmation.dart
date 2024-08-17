@@ -2,7 +2,8 @@ import 'package:formz/formz.dart';
 
 enum PasswordConfirmationValidationError { empty, mismatch }
 
-class PasswordConfirmation extends FormzInput<String, PasswordConfirmationValidationError> {
+class PasswordConfirmation
+    extends FormzInput<String, PasswordConfirmationValidationError> {
   const PasswordConfirmation.pure({this.password = ''}) : super.pure('');
   const PasswordConfirmation.dirty({required this.password, value = ''})
       : super.dirty(value);

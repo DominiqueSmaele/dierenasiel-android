@@ -21,8 +21,9 @@ class AnimalRepository {
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
       };
-      
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/animals', queryParameters: parameters);
+
+      final url = Uri.parse(dotenv.env['API'] ?? '')
+          .replace(path: '/api/animals', queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -45,30 +46,29 @@ class AnimalRepository {
 
       if (_cachedAnimals.animals!.isNotEmpty) {
         return _cachedAnimals = _cachedAnimals.copyWith(
-          animals: List.of(_cachedAnimals.animals!)..addAll(animalResponse.animals!),
+          animals: List.of(_cachedAnimals.animals!)
+            ..addAll(animalResponse.animals!),
           meta: animalResponse.meta,
         );
       }
-      
+
       return _cachedAnimals = animalResponse;
     } catch (e) {
       throw e;
     }
   }
 
-  Future<AnimalResponse> searchAnimals({
-    required int perPage,
-    String? cursor,
-    String? query
-  }) async {
+  Future<AnimalResponse> searchAnimals(
+      {required int perPage, String? cursor, String? query}) async {
     try {
       final parameters = <String, String>{
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
         if (query != null) 'q': query,
       };
-      
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/animals', queryParameters: parameters);
+
+      final url = Uri.parse(dotenv.env['API'] ?? '')
+          .replace(path: '/api/animals', queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -104,8 +104,10 @@ class AnimalRepository {
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
       };
-      
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/shelter/${shelterId}/animals', queryParameters: parameters);
+
+      final url = Uri.parse(dotenv.env['API'] ?? '').replace(
+          path: '/api/shelter/${shelterId}/animals',
+          queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -131,20 +133,21 @@ class AnimalRepository {
     }
   }
 
-  Future<AnimalResponse> searchShelterAnimals({
-    required int shelterId,
-    required int perPage,
-    String? cursor,
-    String? query
-  }) async {
+  Future<AnimalResponse> searchShelterAnimals(
+      {required int shelterId,
+      required int perPage,
+      String? cursor,
+      String? query}) async {
     try {
       final parameters = <String, String>{
         'per_page': perPage.toString(),
         if (cursor != null) 'cursor': cursor,
         if (query != null) 'q': query,
       };
-      
-      final url = Uri.parse(dotenv.env['API'] ?? '').replace(path: '/api/shelter/${shelterId}/animals', queryParameters: parameters);
+
+      final url = Uri.parse(dotenv.env['API'] ?? '').replace(
+          path: '/api/shelter/${shelterId}/animals',
+          queryParameters: parameters);
       final token = await storage.read(key: 'token');
 
       final response = await http.get(
@@ -156,9 +159,7 @@ class AnimalRepository {
         },
       );
 
-
-
-      if (response.statusCode != 200) {    
+      if (response.statusCode != 200) {
         final jsonResponse = jsonDecode(response.body);
 
         throw ApiException(jsonResponse['message'] ?? '');

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/authentication/authentication.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:dierenasiel_android/profile/view/view.dart';
 
 class ProfileView extends StatelessWidget {
@@ -15,16 +15,17 @@ class ProfileView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _UserProfileHeader(),
-            Padding( 
-              padding: EdgeInsets.all(24.0),
-              child: Column(children: [
-                _UserDetails(),
-                SizedBox(height: 20),
-                _EditButton(),
-                SizedBox(height: 20),
-                _LogoutButton(),
-              ],)
-            )
+            Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    _UserDetails(),
+                    SizedBox(height: 20),
+                    _EditButton(),
+                    SizedBox(height: 20),
+                    _LogoutButton(),
+                  ],
+                ))
           ],
         ),
       ),
@@ -37,8 +38,10 @@ class _UserProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstName = context.select((AuthenticationBloc bloc) => bloc.state.user.firstname);
-    final lastName = context.select((AuthenticationBloc bloc) => bloc.state.user.lastname);
+    final firstName =
+        context.select((AuthenticationBloc bloc) => bloc.state.user.firstname);
+    final lastName =
+        context.select((AuthenticationBloc bloc) => bloc.state.user.lastname);
 
     String initials = '';
 
@@ -47,74 +50,74 @@ class _UserProfileHeader extends StatelessWidget {
 
     return SizedBox(
       height: 275,
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Container(
-              height: 150,
-              decoration: const BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(-25),
-                  bottomRight: Radius.circular(-25),
-                ),
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            height: 150,
+            decoration: const BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(-25),
+                bottomRight: Radius.circular(-25),
               ),
             ),
-            Positioned(
-              top: 90,
-              child: Column(
-                children: [
-                  Stack(
-                    alignment: Alignment.bottomRight, 
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: white,
-                        child: Text(
-                          initials,
-                          style: const TextStyle(
-                            fontSize: 40,
-                            color: primaryColor,
-                          ),
+          ),
+          Positioned(
+            top: 90,
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    CircleAvatar(
+                      radius: 60,
+                      backgroundColor: white,
+                      child: Text(
+                        initials,
+                        style: const TextStyle(
+                          fontSize: 40,
+                          color: primaryColor,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const ProfileUpdatePage()), 
-                          );
-                        },
-                        child: Container(
-                          height: 30,  
-                          width: 30,
-                          decoration: const BoxDecoration(
-                            color: primaryColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: white,
-                            size: 15,  
-                          ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ProfileUpdatePage()),
+                        );
+                      },
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: const BoxDecoration(
+                          color: primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.edit,
+                          color: white,
+                          size: 15,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-                  Text('$firstName $lastName', 
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Text('$firstName $lastName',
                     style: const TextStyle(
-                      fontSize: 30, 
+                      fontSize: 30,
                       color: textColor,
                       fontWeight: FontWeight.bold,
-                    )
-                  ),
-                ],
-              ),
+                    )),
+              ],
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -125,7 +128,6 @@ class _UserDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.select((AuthenticationBloc bloc) => bloc.state.user);
     final fullName = '${user.firstname} ${user.lastname}';
-
 
     return Column(
       children: [
@@ -157,11 +159,10 @@ class _UserInfoField extends StatelessWidget {
     required this.label,
     required this.value,
   });
-  
+
   final IconData icon;
   final String label;
   final String value;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +179,7 @@ class _UserInfoField extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5), 
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
     );
   }
 }
@@ -193,13 +194,14 @@ class _EditButton extends StatelessWidget {
       height: 40,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            foregroundColor: white,
-          ),
+          backgroundColor: primaryColor,
+          foregroundColor: white,
+        ),
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ProfileUpdatePasswordPage()), 
+            MaterialPageRoute(
+                builder: (context) => const ProfileUpdatePasswordPage()),
           );
         },
         child: const Text('Wachtwoord wijzigen'),
@@ -218,9 +220,9 @@ class _LogoutButton extends StatelessWidget {
       height: 40,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: red, 
-          foregroundColor: white, 
-          ),
+          backgroundColor: red,
+          foregroundColor: white,
+        ),
         child: const Text('Logout'),
         onPressed: () {
           context.read<AuthenticationBloc>().add(AuthenticationLogoutPressed());

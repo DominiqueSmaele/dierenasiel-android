@@ -22,7 +22,7 @@ class ShelterResponse extends Equatable {
     return ShelterResponse(
       shelters: sheltersList,
       meta: meta,
-    ); 
+    );
   }
 
   ShelterResponse copyWith({

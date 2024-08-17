@@ -12,5 +12,3 @@ Future main() async {
 
   runApp(const App());
 }
-
-

@@ -13,3 +13,5 @@ dependencies:
   intl: ^0.19.0
   authentication_repository:
     path: ../authentication_repository
+  timeslot_repository:
+    path: ../timeslot_repository

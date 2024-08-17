@@ -17,8 +17,11 @@ class OpeningPeriod extends Equatable {
     return OpeningPeriod(
       id: json['id'] as int,
       day: json['day'] as int,
-      open: json['open'] != null ? DateTime.parse(json['open'] as String) : null,
-      close: json['close'] != null ? DateTime.parse(json['close'] as String) : null,
+      open:
+          json['open'] != null ? DateTime.parse(json['open'] as String) : null,
+      close: json['close'] != null
+          ? DateTime.parse(json['close'] as String)
+          : null,
     );
   }
 

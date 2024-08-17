@@ -7,9 +7,11 @@ import 'package:dierenasiel_android/home/home.dart';
 import 'package:dierenasiel_android/login/login.dart';
 import 'package:dierenasiel_android/splash/splash.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:dierenasiel_android/helper/theme.dart';
+import 'package:dierenasiel_android/helpers/theme.dart';
 import 'package:animal_repository/animal_repository.dart';
 import 'package:shelter_repository/shelter_repository.dart';
+import 'package:timeslot_repository/timeslot_repository.dart';
+import 'package:type_repository/type_repository.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -23,6 +25,8 @@ class _AppState extends State<App> {
   late final UserRepository _userRepository;
   late final AnimalRepository _animalRepository;
   late final ShelterRepository _shelterRepository;
+  late final TimeslotRepository _timeslotRepository;
+  late final TypeRepository _typeRepository;
 
   @override
   void initState() {
@@ -31,6 +35,8 @@ class _AppState extends State<App> {
     _userRepository = UserRepository();
     _animalRepository = AnimalRepository();
     _shelterRepository = ShelterRepository();
+    _timeslotRepository = TimeslotRepository();
+    _typeRepository = TypeRepository();
   }
 
   @override
@@ -47,6 +53,8 @@ class _AppState extends State<App> {
         RepositoryProvider.value(value: _userRepository),
         RepositoryProvider.value(value: _animalRepository),
         RepositoryProvider.value(value: _shelterRepository),
+        RepositoryProvider.value(value: _timeslotRepository),
+        RepositoryProvider.value(value: _typeRepository),
       ],
       child: BlocProvider(
         lazy: false,

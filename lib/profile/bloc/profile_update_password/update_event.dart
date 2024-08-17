@@ -16,7 +16,8 @@ final class ProfileUpdatePasswordChanged extends ProfileUpdatePasswordEvent {
   List<Object> get props => [password];
 }
 
-final class ProfileUpdateRepeatPasswordChanged extends ProfileUpdatePasswordEvent {
+final class ProfileUpdateRepeatPasswordChanged
+    extends ProfileUpdatePasswordEvent {
   const ProfileUpdateRepeatPasswordChanged(this.repeatPassword);
 
   final String repeatPassword;

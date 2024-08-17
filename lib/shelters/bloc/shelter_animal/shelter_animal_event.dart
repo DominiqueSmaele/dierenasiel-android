@@ -18,4 +18,13 @@ final class ShelterAnimalSearched extends ShelterAnimalEvent {
   List<Object?> get props => [query];
 }
 
+final class ShelterAnimalTypeSelected extends ShelterAnimalEvent {
+  final int? typeId;
+
+  const ShelterAnimalTypeSelected(this.typeId);
+
+  @override
+  List<Object?> get props => [typeId];
+}
+
 final class ShelterAnimalClearSearched extends ShelterAnimalEvent {}

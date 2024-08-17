@@ -1,13 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animal_repository/animal_repository.dart';
 import 'package:quality_repository/quality_repository.dart';
 import 'package:dierenasiel_android/shelters/shelters.dart';
 import 'package:string_capitalize/string_capitalize.dart';
+import 'package:type_repository/type_repository.dart';
 
 class AnimalDetail extends StatelessWidget {
   const AnimalDetail({required this.animal, super.key});
@@ -21,7 +21,8 @@ class AnimalDetail extends StatelessWidget {
     double statusBarHeight = MediaQuery.of(context).viewPadding.top;
 
     if (animal.shelter.image == null) {
-      shelterImageUrl = '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
+      shelterImageUrl =
+          '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
     } else {
       shelterImageUrl = animal.shelter.image!.original.url;
     }
@@ -59,9 +60,9 @@ class AnimalDetail extends StatelessWidget {
             ),
           ),
           DraggableScrollableSheet(
-            initialChildSize: 0.5, // Initial size of the draggable area
-            minChildSize: 0.5,     // Minimum size when collapsed
-            maxChildSize: 0.7,     // Maximum size when expanded
+            initialChildSize: 0.5,
+            minChildSize: 0.5,
+            maxChildSize: 0.7,
             builder: (BuildContext context, ScrollController scrollController) {
               return Container(
                 decoration: const BoxDecoration(
@@ -101,10 +102,10 @@ class AnimalDetail extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 10.0),
+                                  vertical: 8.0, horizontal: 12.0),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(16.0),
                               ),
                               child: Row(
                                 children: [
@@ -128,10 +129,11 @@ class AnimalDetail extends StatelessWidget {
                             ),
                             const SizedBox(width: 12.0),
                             Container(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 12.0),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(16.0),
                               ),
                               child: Row(
                                 children: [
@@ -165,13 +167,14 @@ class AnimalDetail extends StatelessWidget {
                             dividerColor: Colors.transparent,
                           ),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
                             ),
                             child: ExpansionTile(
-                              tilePadding: EdgeInsets.zero, 
+                              tilePadding: EdgeInsets.zero,
                               childrenPadding: EdgeInsets.zero,
                               title: const Text(
                                 'Eigenschappen',
@@ -181,15 +184,15 @@ class AnimalDetail extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-
-                              iconColor: primaryColor, 
-                              collapsedIconColor: primaryColor, 
-                              initiallyExpanded: false, 
+                              iconColor: primaryColor,
+                              collapsedIconColor: primaryColor,
+                              initiallyExpanded: false,
                               children: sortedAnimalQualities.map((quality) {
                                 return Card(
-                                  margin: const EdgeInsets.only(top: 5.0, bottom: 15.0),
+                                  margin: const EdgeInsets.only(
+                                      top: 5.0, bottom: 15.0),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0), // Match the container's border radius
+                                    borderRadius: BorderRadius.circular(16.0),
                                   ),
                                   color: primaryColor,
                                   child: ListTile(
@@ -198,13 +201,13 @@ class AnimalDetail extends StatelessWidget {
                                       quality.value == null
                                           ? Icons.help
                                           : quality.value!
-                                              ? Icons.check_circle 
-                                              : Icons.cancel, 
+                                              ? Icons.check_circle
+                                              : Icons.cancel,
                                       color: quality.value == null
-                                          ? orange 
+                                          ? orange
                                           : quality.value!
-                                              ? green 
-                                              : lightDarkRed, 
+                                              ? green
+                                              : lightDarkRed,
                                     ),
                                     title: Text(
                                       quality.name.capitalize(),
@@ -216,19 +219,24 @@ class AnimalDetail extends StatelessWidget {
                                   ),
                                 );
                               }).toList(),
+                            ),
                           ),
-                          ), 
                         ),
                         const SizedBox(height: 25.0),
                         GestureDetector(
                           onTap: () {
-                              Navigator.push(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
+                                settings:
+                                    const RouteSettings(name: '/shelterDetail'),
                                 builder: (context) => BlocProvider(
                                   create: (context) => ShelterAnimalBloc(
                                     shelter: animal.shelter,
-                                    animalRepository: context.read<AnimalRepository>(),
+                                    animalRepository:
+                                        context.read<AnimalRepository>(),
+                                    typeRepository:
+                                        context.read<TypeRepository>(),
                                   )..add(ShelterAnimalFetched()),
                                   child: ShelterDetail(shelter: animal.shelter),
                                 ),
@@ -236,13 +244,13 @@ class AnimalDetail extends StatelessWidget {
                             );
                           },
                           child: Stack(
-                            children: [ 
+                            children: [
                               Container(
                                 width: double.infinity,
                                 padding: const EdgeInsets.all(24.0),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(16.0),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,8 +283,13 @@ class AnimalDetail extends StatelessWidget {
                                         children: [
                                           CachedNetworkImage(
                                             imageUrl: shelterImageUrl,
-                                            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
                                             fit: BoxFit.cover,
                                             height: 125.0,
                                             width: 125.0,
@@ -293,21 +306,21 @@ class AnimalDetail extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                  ], 
+                                  ],
                                 ),
                               ),
                               const Positioned(
                                 bottom: 15,
                                 right: 15,
                                 child: Icon(
-                                  Icons.open_in_new, // or any icon that suits your design
+                                  Icons.open_in_new,
                                   color: primaryColor,
                                   size: 16.0,
                                 ),
-                              ), 
+                              ),
                             ],
-                          ),  
-                        ),
+                          ),
+                        )
                       ],
                     ),
                   ),

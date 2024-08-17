@@ -2,10 +2,11 @@ import 'package:animal_repository/animal_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:shelter_repository/shelter_repository.dart';
 import 'package:dierenasiel_android/shelters/shelters.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:type_repository/type_repository.dart';
 
 class ShelterListItem extends StatelessWidget {
   const ShelterListItem({required this.shelter, super.key});
@@ -19,7 +20,8 @@ class ShelterListItem extends StatelessWidget {
     String shelterImageUrl;
 
     if (shelter.image == null) {
-      shelterImageUrl = '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
+      shelterImageUrl =
+          '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
     } else {
       shelterImageUrl = shelter.image!.original.url;
     }
@@ -33,6 +35,7 @@ class ShelterListItem extends StatelessWidget {
               create: (context) => ShelterAnimalBloc(
                 shelter: shelter,
                 animalRepository: context.read<AnimalRepository>(),
+                typeRepository: context.read<TypeRepository>(),
               )..add(ShelterAnimalFetched()),
               child: ShelterDetail(shelter: shelter),
             ),
@@ -51,23 +54,25 @@ class ShelterListItem extends StatelessWidget {
           children: [
             CachedNetworkImage(
               imageUrl: shelterImageUrl,
-              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+              placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => const Icon(Icons.error),
               fit: BoxFit.contain,
               height: screenHeight * 0.125,
               width: screenWidth * 0.35,
             ),
-            Padding (
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
-                  shelter.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: primaryColor,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                shelter.name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: primaryColor,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
             ),
           ],
         ),

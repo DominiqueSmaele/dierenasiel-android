@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/login/login.dart';
-import 'package:dierenasiel_android/helper/constants.dart';
+import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:dierenasiel_android/register/view/register_page.dart';
 import 'package:formz/formz.dart';
 
@@ -19,9 +19,8 @@ class LoginForm extends StatelessWidget {
               SnackBar(
                 backgroundColor: errorColor,
                 content: Text(state.error.isNotEmpty
-                ? state.error
-                : 'Authenticatie fout...'
-              ),
+                    ? state.error
+                    : 'Authenticatie fout...'),
                 showCloseIcon: true,
               ),
             );
@@ -65,7 +64,7 @@ class _LogoAndAppNameField extends StatelessWidget {
         Text(
           'Dierenasielen\nBelgië'.toUpperCase(),
           textAlign: TextAlign.center,
-          style: const TextStyle( 
+          style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
             color: primaryColor,
@@ -174,32 +173,31 @@ class _LoginButton extends StatelessWidget {
 }
 
 class _SignUpField extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Nog geen account?'),
-          TextButton(
-            key: const Key('loginForm_signUp_textButton'),
-            style: ButtonStyle(
-              overlayColor: WidgetStateProperty.all(Colors.transparent),
-              padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(5)),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RegisterPage()),
-              );
-            },
-            child: const Text(
-              'Meld aan',
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Nog geen account?'),
+        TextButton(
+          key: const Key('loginForm_signUp_textButton'),
+          style: ButtonStyle(
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+            padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                const EdgeInsets.all(5)),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RegisterPage()),
+            );
+          },
+          child: const Text('Meld aan',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-              )
-            ),
-          ),
-        ],
-      );
-    }
+              )),
+        ),
+      ],
+    );
+  }
 }

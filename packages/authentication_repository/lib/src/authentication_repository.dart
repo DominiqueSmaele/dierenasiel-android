@@ -13,7 +13,7 @@ class AuthenticationRepository {
 
   Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
-    yield  await _loadUser();
+    yield await _loadUser();
     yield* _controller.stream;
   }
 
@@ -31,33 +31,31 @@ class AuthenticationRepository {
     required String email,
     required String password,
   }) async {
-      final url = Uri.parse('${dotenv.env['API']}/login');
+    final url = Uri.parse('${dotenv.env['API']}/login');
 
-      try {
-        final response = await http.post(
-          url, 
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json'
-          },
-          body: jsonEncode(<String, String>{
-            'email': email,
-            'password': password
-          }),
-        );
+    try {
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        body:
+            jsonEncode(<String, String>{'email': email, 'password': password}),
+      );
 
-        final jsonResponse = jsonDecode(response.body);
+      final jsonResponse = jsonDecode(response.body);
 
-        if (response.statusCode != 200) {
-          throw ApiException(jsonResponse['message'] ?? '');
-        }
-
-        await _storage.write(key: 'token', value: jsonResponse['token']);
-
-        _controller.add(AuthenticationStatus.authenticated);
-      } catch (e) {
-        throw e;
+      if (response.statusCode != 200) {
+        throw ApiException(jsonResponse['message'] ?? '');
       }
+
+      await _storage.write(key: 'token', value: jsonResponse['token']);
+
+      _controller.add(AuthenticationStatus.authenticated);
+    } catch (e) {
+      throw e;
+    }
   }
 
   Future<void> register({
@@ -70,7 +68,7 @@ class AuthenticationRepository {
 
     try {
       final response = await http.post(
-        url, 
+        url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Accept': 'application/json'
@@ -85,9 +83,9 @@ class AuthenticationRepository {
 
       final jsonResponse = jsonDecode(response.body);
 
-        if (response.statusCode != 201) {
-          throw ApiException(jsonResponse['message'] ?? '');
-        }
+      if (response.statusCode != 201) {
+        throw ApiException(jsonResponse['message'] ?? '');
+      }
 
       await _storage.write(key: 'token', value: jsonResponse['token']);
 

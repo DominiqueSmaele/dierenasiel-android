@@ -1,6 +1,6 @@
 part of 'shelter_bloc.dart';
 
-enum ShelterStatus { initial, success, failure, refresh, notFound }
+enum ShelterStatus { initial, success, failure, refresh, empty, notFound }
 
 final class ShelterState extends Equatable {
   const ShelterState({

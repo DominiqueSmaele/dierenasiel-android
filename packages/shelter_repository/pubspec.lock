@@ -271,6 +271,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  timeslot_repository:
+    dependency: "direct main"
+    description:
+      path: "../timeslot_repository"
+      relative: true
+    source: path
+    version: "0.0.0"
   typed_data:
     dependency: transitive
     description:

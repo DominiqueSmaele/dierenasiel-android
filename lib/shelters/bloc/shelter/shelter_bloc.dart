@@ -10,7 +10,7 @@ part 'shelter_event.dart';
 part 'shelter_state.dart';
 
 const shelterThrottleDuration = Duration(milliseconds: 100);
-const shelterCooldownDuration = Duration(seconds: 10);
+const shelterCooldownDuration = Duration(seconds: 5);
 const refreshDelay = Duration(milliseconds: 500);
 
 const shelterLimit = 12;
@@ -25,9 +25,9 @@ EventTransformer<E> shelterThrottleDroppable<E>(Duration duration) {
 }
 
 class ShelterBloc extends Bloc<ShelterEvent, ShelterState> {
-  ShelterBloc({required ShelterRepository shelterRepository}) :
-    _shelterRepository = shelterRepository,
-    super(const ShelterState()) {
+  ShelterBloc({required ShelterRepository shelterRepository})
+      : _shelterRepository = shelterRepository,
+        super(const ShelterState()) {
     on<ShelterFetched>(
       _onShelterFetched,
       transformer: shelterThrottleDroppable(shelterThrottleDuration),
@@ -46,12 +46,19 @@ class ShelterBloc extends Bloc<ShelterEvent, ShelterState> {
 
   final ShelterRepository _shelterRepository;
 
-  Future<void> _onShelterFetched(ShelterFetched event, Emitter<ShelterState> emit) async {
+  Future<void> _onShelterFetched(
+      ShelterFetched event, Emitter<ShelterState> emit) async {
     if (state.hasReachedMax) return;
-    
+
     try {
-      if (state.status == ShelterStatus.initial || state.status == ShelterStatus.refresh) {
-        final response = await _shelterRepository.getShelters(perPage: shelterLimit);
+      if (state.status == ShelterStatus.initial ||
+          state.status == ShelterStatus.refresh) {
+        final response =
+            await _shelterRepository.getShelters(perPage: shelterLimit);
+
+        if (response.shelters!.isEmpty) {
+          return emit(state.copyWith(status: ShelterStatus.empty));
+        }
 
         shelterCursor = response.meta['next_cursor'];
 
@@ -64,7 +71,8 @@ class ShelterBloc extends Bloc<ShelterEvent, ShelterState> {
         );
       }
 
-      final response = await _shelterRepository.getShelters(perPage: shelterLimit, cursor: shelterCursor, refresh: true);
+      final response = await _shelterRepository.getShelters(
+          perPage: shelterLimit, cursor: shelterCursor, refresh: true);
 
       shelterCursor = response.meta['next_cursor'];
 
@@ -84,9 +92,10 @@ class ShelterBloc extends Bloc<ShelterEvent, ShelterState> {
     }
   }
 
-  Future<void> _onShelterRefreshed(ShelterRefreshed event, Emitter<ShelterState> emit) async {
+  Future<void> _onShelterRefreshed(
+      ShelterRefreshed event, Emitter<ShelterState> emit) async {
     shelterCursor = null;
-  
+
     _shelterRepository.clearCachedShelters();
 
     emit(
@@ -103,11 +112,13 @@ class ShelterBloc extends Bloc<ShelterEvent, ShelterState> {
     add(ShelterFetched());
   }
 
-  Future<void> _onShelterSearched(ShelterSearched event, Emitter<ShelterState> emit) async {
+  Future<void> _onShelterSearched(
+      ShelterSearched event, Emitter<ShelterState> emit) async {
     final query = event.query.toLowerCase();
 
     try {
-      final response = await _shelterRepository.searchShelters(perPage: shelterLimit, cursor: shelterFilterCursor, query: query);
+      final response = await _shelterRepository.searchShelters(
+          perPage: shelterLimit, cursor: shelterFilterCursor, query: query);
 
       if (response.shelters!.isEmpty) {
         return emit(state.copyWith(status: ShelterStatus.notFound));
@@ -122,13 +133,13 @@ class ShelterBloc extends Bloc<ShelterEvent, ShelterState> {
           hasReachedMax: shelterFilterCursor == null,
         ),
       );
-
     } catch (_) {
       emit(state.copyWith(status: ShelterStatus.failure));
     }
   }
 
-  Future<void> _onShelterClearSearched(ShelterClearSearched event, Emitter<ShelterState> emit) async {
+  Future<void> _onShelterClearSearched(
+      ShelterClearSearched event, Emitter<ShelterState> emit) async {
     shelterFilterCursor = null;
 
     emit(
