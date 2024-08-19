@@ -33,6 +33,7 @@ class TimeslotRepository {
 
       return TimeslotResponse.fromJson(jsonResponse);
     } catch (e) {
+      print(e);
       throw e;
     }
   }
@@ -64,6 +65,38 @@ class TimeslotRepository {
         throw ApiException(jsonResponse['message'] ?? '');
       }
     } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> bookTimeslotUser({
+    required int id,
+  }) async {
+    try {
+      final parameters = <String, String>{
+        'id': id.toString(),
+      };
+
+      final url = Uri.parse(dotenv.env['API'] ?? '')
+          .replace(path: '/api/timeslot/user', queryParameters: parameters);
+      final token = await storage.read(key: 'token');
+
+      final response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Connection': 'Keep-Alive',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        final jsonResponse = jsonDecode(response.body);
+
+        throw ApiException(jsonResponse['message'] ?? '');
+      }
+    } catch (e) {
+      print(e);
       throw e;
     }
   }

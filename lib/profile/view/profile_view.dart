@@ -22,7 +22,7 @@ class ProfileView extends StatelessWidget {
                     _UserDetails(),
                     SizedBox(height: 20),
                     _EditButton(),
-                    SizedBox(height: 20),
+                    Padding(padding: EdgeInsets.all(8)),
                     _LogoutButton(),
                   ],
                 ))
@@ -53,13 +53,12 @@ class _UserProfileHeader extends StatelessWidget {
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
-          Container(
-            height: 150,
-            decoration: const BoxDecoration(
-              color: primaryColor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(-25),
-                bottomRight: Radius.circular(-25),
+          ClipPath(
+            clipper: CurveClipper(), // Custom clipper for curved shape
+            child: Container(
+              height: 185,
+              decoration: const BoxDecoration(
+                color: primaryColor,
               ),
             ),
           ),
@@ -118,6 +117,24 @@ class _UserProfileHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class CurveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 50);
+    path.quadraticBezierTo(
+        size.width / 2, size.height, size.width, size.height - 50);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
 

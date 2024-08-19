@@ -68,14 +68,17 @@ class _UserProfileHeader extends StatelessWidget {
     initials += lastName.isNotEmpty ? lastName[0] : '';
 
     return SizedBox(
-      height: 300,
+      height: 275,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
-          Container(
-            height: 150,
-            decoration: const BoxDecoration(
-              color: primaryColor,
+          ClipPath(
+            clipper: CurveClipper(), // Custom clipper for curved shape
+            child: Container(
+              height: 185,
+              decoration: const BoxDecoration(
+                color: primaryColor,
+              ),
             ),
           ),
           Positioned(
@@ -93,6 +96,28 @@ class _UserProfileHeader extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 40,
                           color: primaryColor,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ProfileUpdatePage()),
+                        );
+                      },
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: const BoxDecoration(
+                          color: primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.edit,
+                          color: white,
+                          size: 15,
                         ),
                       ),
                     ),

@@ -61,6 +61,34 @@ final class Shelter extends Equatable {
     );
   }
 
+  Shelter copyWith({
+    final int? id,
+    final String? name,
+    final String? email,
+    final String? phone,
+    final String? facebook,
+    final String? instagram,
+    final String? tiktok,
+    final Address? address,
+    final Media? image,
+    final List<OpeningPeriod>? openingPeriods,
+    final List<Timeslot>? timeslots,
+  }) {
+    return Shelter(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      facebook: facebook ?? this.facebook,
+      instagram: instagram ?? this.instagram,
+      tiktok: tiktok ?? this.tiktok,
+      address: address ?? this.address,
+      image: image ?? this.image,
+      openingPeriods: openingPeriods ?? this.openingPeriods,
+      timeslots: timeslots ?? this.timeslots,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

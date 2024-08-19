@@ -25,7 +25,7 @@ class TimeslotsPageState extends State<TimeslotsPage> {
         create: (context) => TimeslotBloc(
           timeslotRepository: context.read<TimeslotRepository>(),
         )..add(TimeslotFetched()),
-        child: TimeslotsView(),
+        child: const TimeslotsView(),
       ),
     );
   }

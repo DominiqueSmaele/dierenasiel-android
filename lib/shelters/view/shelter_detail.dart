@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:dierenasiel_android/shelters/bloc/shelter_animal/shelter_animal_bloc.dart';
+import 'package:dierenasiel_android/shelters/shelters.dart';
+import 'package:dierenasiel_android/shelters/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,7 +11,6 @@ import 'package:shelter_repository/shelter_repository.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dierenasiel_android/animals/widgets/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +26,9 @@ class ShelterDetail extends StatefulWidget {
 }
 
 class ShelterDetailState extends State<ShelterDetail> {
+  final PageStorageKey<String> _typeListKey =
+      const PageStorageKey<String>('typeList');
+
   final Completer<GoogleMapController> _controller = Completer();
   final _scrollController = ScrollController();
   final _debounceDuration = const Duration(milliseconds: 300);
@@ -94,7 +97,7 @@ class ShelterDetailState extends State<ShelterDetail> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         body: SingleChildScrollView(
-          //controller: _scrollController,
+          controller: _scrollController,
           child: Stack(
             children: [
               Column(
@@ -161,7 +164,7 @@ class ShelterDetailState extends State<ShelterDetail> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15.0),
+                        const SizedBox(height: 25.0),
                         Theme(
                           data: Theme.of(context).copyWith(
                             dividerColor: Colors.transparent,
@@ -171,7 +174,7 @@ class ShelterDetailState extends State<ShelterDetail> {
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12.0),
+                              borderRadius: BorderRadius.circular(16.0),
                             ),
                             child: ExpansionTile(
                               tilePadding: EdgeInsets.zero,
@@ -200,7 +203,7 @@ class ShelterDetailState extends State<ShelterDetail> {
                                                 top: 5.0, bottom: 15.0),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(12.0),
+                                                  BorderRadius.circular(16.0),
                                             ),
                                             color: primaryColor,
                                             child: ListTile(
@@ -225,22 +228,30 @@ class ShelterDetailState extends State<ShelterDetail> {
                                         }).toList()
                                       : [
                                           Container(
-                                            margin: const EdgeInsets.all(32),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 32.0,
-                                                vertical: 64.0),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(16.0),
-                                              color: primaryColor,
-                                            ),
-                                            child: const Text(
-                                              'Geen openingsuren aanwezig',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: white,
-                                                fontSize: 18.0,
-                                              ),
+                                                vertical: 32.0),
+                                            width: double.infinity,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/empty.svg',
+                                                  height: 100,
+                                                  color: primaryColor,
+                                                ),
+                                                const SizedBox(height: 8.0),
+                                                const Text(
+                                                  'Geen openingsuren aanwezig...',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 16.0,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -254,357 +265,349 @@ class ShelterDetailState extends State<ShelterDetail> {
                           indent: 20,
                           endIndent: 20,
                         ),
-                        const SizedBox(height: 25.0),
-                        BlocBuilder<ShelterAnimalBloc, ShelterAnimalState>(
-                          builder: (context, state) {
-                            switch (state.status) {
-                              case ShelterAnimalStatus.failure:
-                                return LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return SingleChildScrollView(
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          minHeight: constraints.maxHeight,
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 32.0),
-                                          width: double.infinity,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SvgPicture.asset(
-                                                'assets/empty.svg',
-                                                height: 125,
-                                                color: primaryColor,
-                                              ),
-                                              const SizedBox(height: 8.0),
-                                              const Text(
-                                                'Het ophalen van dieren is mislukt...',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 16.0,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              case ShelterAnimalStatus.empty:
-                                return LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return SingleChildScrollView(
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          minHeight: constraints
-                                              .maxHeight, // Ensure it fills the screen height
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 32.0),
-                                          width: double.infinity,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SvgPicture.asset(
-                                                'assets/empty.svg',
-                                                height: 125,
-                                                color: primaryColor,
-                                              ),
-                                              const SizedBox(height: 8.0),
-                                              const Text(
-                                                'Oops, geen dieren gevonden in dit dierenasiel!',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 16.0,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              case ShelterAnimalStatus.notFound:
-                                return Column(
-                                  children: [
-                                    SearchBar(
-                                      controller: _searchController,
-                                      focusNode: _searchFocusNode,
-                                      padding: const WidgetStatePropertyAll<
-                                          EdgeInsets>(
-                                        EdgeInsets.symmetric(horizontal: 16.0),
-                                      ),
-                                      leading: const Icon(
-                                        Icons.search,
-                                        color: primaryColor,
-                                      ),
-                                      hintText: 'Zoeken',
-                                      onChanged: _onSearchChanged,
-                                      trailing:
-                                          _searchController.text.isNotEmpty
-                                              ? [
-                                                  IconButton(
-                                                    onPressed: _clearSearch,
-                                                    icon: const Icon(
-                                                      Icons.close,
-                                                      color: primaryColor,
-                                                    ),
-                                                  ),
-                                                ]
-                                              : null,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: SizedBox(
-                                            height: 100,
-                                            child: ListView.builder(
-                                              padding: EdgeInsets.zero,
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: state.types.length,
-                                              itemBuilder: (context, index) {
-                                                final type = state.types[index];
-                                                final isSelected =
-                                                    selectedType == type.id;
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    if (isSelected) {
-                                                      setState(() {
-                                                        selectedType = null;
-                                                      });
-                                                      context
-                                                          .read<
-                                                              ShelterAnimalBloc>()
-                                                          .add(
-                                                              const ShelterAnimalTypeSelected(
-                                                                  null));
-                                                    } else {
-                                                      setState(() {
-                                                        selectedType = type.id;
-                                                      });
-                                                      context
-                                                          .read<
-                                                              ShelterAnimalBloc>()
-                                                          .add(
-                                                              ShelterAnimalTypeSelected(
-                                                                  type.id));
-                                                    }
-                                                  },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8.0),
-                                                    child: Chip(
-                                                      label: Text(
-                                                        type.name,
-                                                        style: TextStyle(
-                                                          color: isSelected
-                                                              ? white
-                                                              : primaryColor,
-                                                        ),
-                                                      ),
-                                                      backgroundColor:
-                                                          isSelected
-                                                              ? primaryColor
-                                                              : white,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        side: BorderSide.none,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 32.0, vertical: 128),
-                                      width: double.infinity,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/empty.svg',
-                                            height: 125,
-                                            color: primaryColor,
-                                          ),
-                                          const SizedBox(height: 8.0),
-                                          const Text(
-                                            'Oops, Geen dierenasielen gevonden!',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 16.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              case ShelterAnimalStatus.success:
-                                final displayAnimals =
-                                    state.filteredAnimals.isNotEmpty
-                                        ? state.filteredAnimals
-                                        : state.searchedAnimals.isNotEmpty
-                                            ? state.searchedAnimals
-                                            : state.animals;
-
-                                return Column(
-                                  children: [
-                                    SearchBar(
-                                      controller: _searchController,
-                                      focusNode: _searchFocusNode,
-                                      padding: const WidgetStatePropertyAll<
-                                          EdgeInsets>(
-                                        EdgeInsets.symmetric(horizontal: 16.0),
-                                      ),
-                                      leading: const Icon(
-                                        Icons.search,
-                                        color: primaryColor,
-                                      ),
-                                      hintText: 'Zoeken',
-                                      onChanged: _onSearchChanged,
-                                      trailing:
-                                          _searchController.text.isNotEmpty
-                                              ? [
-                                                  IconButton(
-                                                    onPressed: _clearSearch,
-                                                    icon: const Icon(
-                                                      Icons.close,
-                                                      color: primaryColor,
-                                                    ),
-                                                  ),
-                                                ]
-                                              : null,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: SizedBox(
-                                            height: 100,
-                                            child: ListView.builder(
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: state.types.length,
-                                              itemBuilder: (context, index) {
-                                                final type = state.types[index];
-                                                final isSelected =
-                                                    selectedType == type.id;
-                                                return GestureDetector(
-                                                  onTap: () {
-                                                    if (isSelected) {
-                                                      setState(() {
-                                                        selectedType = null;
-                                                      });
-                                                      context
-                                                          .read<
-                                                              ShelterAnimalBloc>()
-                                                          .add(
-                                                              const ShelterAnimalTypeSelected(
-                                                                  null));
-                                                    } else {
-                                                      setState(() {
-                                                        selectedType = type.id;
-                                                      });
-                                                      context
-                                                          .read<
-                                                              ShelterAnimalBloc>()
-                                                          .add(
-                                                              ShelterAnimalTypeSelected(
-                                                                  type.id));
-                                                    }
-                                                  },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8.0),
-                                                    child: Chip(
-                                                      label: Text(
-                                                        type.name,
-                                                        style: TextStyle(
-                                                          color: isSelected
-                                                              ? white
-                                                              : primaryColor,
-                                                        ),
-                                                      ),
-                                                      backgroundColor:
-                                                          isSelected
-                                                              ? primaryColor
-                                                              : white,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        side: BorderSide.none,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    GridView.builder(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 32.0),
-                                      shrinkWrap: true,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        crossAxisSpacing: 16.0,
-                                        mainAxisSpacing: 16.0,
-                                        mainAxisExtent: screenHeight * 0.3,
-                                      ),
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return index >= displayAnimals.length
-                                            ? const BottomLoader()
-                                            : AnimalListItem(
-                                                animal: displayAnimals[index]);
-                                      },
-                                      itemCount: state.hasReachedMax
-                                          ? displayAnimals.length
-                                          : displayAnimals.length + 1,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                    )
-                                  ],
-                                );
-                              case ShelterAnimalStatus.initial:
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                            }
-                          },
-                        ),
                       ],
                     ),
+                  ),
+                  BlocBuilder<ShelterAnimalBloc, ShelterAnimalState>(
+                    builder: (context, state) {
+                      switch (state.status) {
+                        case ShelterAnimalStatus.failure:
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              return IntrinsicHeight(
+                                child: Container(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      32.0, 16.0, 32.0, 64.0),
+                                  width: double.infinity,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/empty.svg',
+                                        height: 100,
+                                        color: primaryColor,
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      const Text(
+                                        'Het ophalen van dieren is mislukt...',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        case ShelterAnimalStatus.empty:
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              return IntrinsicHeight(
+                                child: Container(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      48.0, 16.0, 48.0, 64.0),
+                                  width: double.infinity,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/empty.svg',
+                                        height: 100,
+                                        color: primaryColor,
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      const Text(
+                                        'Oops, geen dieren gevonden in dit dierenasiel!',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        case ShelterAnimalStatus.notFound:
+                          return Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                                child: SearchBar(
+                                  controller: _searchController,
+                                  focusNode: _searchFocusNode,
+                                  padding:
+                                      const WidgetStatePropertyAll<EdgeInsets>(
+                                    EdgeInsets.symmetric(horizontal: 16.0),
+                                  ),
+                                  leading: const Icon(
+                                    Icons.search,
+                                    color: primaryColor,
+                                  ),
+                                  hintText: 'Zoeken',
+                                  onChanged: _onSearchChanged,
+                                  trailing: _searchController.text.isNotEmpty
+                                      ? [
+                                          IconButton(
+                                            onPressed: _clearSearch,
+                                            icon: const Icon(
+                                              Icons.close,
+                                              color: primaryColor,
+                                            ),
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Row(
+                                  children: [
+                                    Flexible(
+                                      child: SizedBox(
+                                        height: 100,
+                                        width: double.infinity,
+                                        child: ListView.builder(
+                                          key: _typeListKey,
+                                          padding: EdgeInsets.zero,
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: state.types.length,
+                                          itemBuilder: (context, index) {
+                                            final type = state.types[index];
+                                            final isSelected =
+                                                selectedType == type.id;
+                                            return GestureDetector(
+                                              onTap: () {
+                                                if (isSelected) {
+                                                  setState(() {
+                                                    selectedType = null;
+                                                  });
+                                                  context
+                                                      .read<ShelterAnimalBloc>()
+                                                      .add(
+                                                          const ShelterAnimalTypeSelected(
+                                                              null));
+                                                } else {
+                                                  setState(() {
+                                                    selectedType = type.id;
+                                                  });
+                                                  context
+                                                      .read<ShelterAnimalBloc>()
+                                                      .add(
+                                                          ShelterAnimalTypeSelected(
+                                                              type.id));
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: Chip(
+                                                  label: Text(
+                                                    type.name,
+                                                    style: TextStyle(
+                                                      color: isSelected
+                                                          ? white
+                                                          : primaryColor,
+                                                    ),
+                                                  ),
+                                                  backgroundColor: isSelected
+                                                      ? primaryColor
+                                                      : white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                    side: const BorderSide(
+                                                        style:
+                                                            BorderStyle.none),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.fromLTRB(
+                                    32.0, 32.0, 32.0, 96.0),
+                                width: double.infinity,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/empty.svg',
+                                      height: 125,
+                                      color: primaryColor,
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    const Text(
+                                      'Oops, geen dieren gevonden!',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        case ShelterAnimalStatus.success:
+                          final displayAnimals =
+                              state.filteredAnimals.isNotEmpty
+                                  ? state.filteredAnimals
+                                  : state.searchedAnimals.isNotEmpty
+                                      ? state.searchedAnimals
+                                      : state.animals;
+
+                          return Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                                child: SearchBar(
+                                  controller: _searchController,
+                                  focusNode: _searchFocusNode,
+                                  padding:
+                                      const WidgetStatePropertyAll<EdgeInsets>(
+                                    EdgeInsets.symmetric(horizontal: 16.0),
+                                  ),
+                                  leading: const Icon(
+                                    Icons.search,
+                                    color: primaryColor,
+                                  ),
+                                  hintText: 'Zoeken',
+                                  onChanged: _onSearchChanged,
+                                  trailing: _searchController.text.isNotEmpty
+                                      ? [
+                                          IconButton(
+                                            onPressed: _clearSearch,
+                                            icon: const Icon(
+                                              Icons.close,
+                                              color: primaryColor,
+                                            ),
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 100,
+                                        child: ListView.builder(
+                                          key: const PageStorageKey<String>(
+                                              'typeList'),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: state.types.length,
+                                          itemBuilder: (context, index) {
+                                            final type = state.types[index];
+                                            final isSelected =
+                                                selectedType == type.id;
+                                            return GestureDetector(
+                                              onTap: () {
+                                                if (isSelected) {
+                                                  setState(() {
+                                                    selectedType = null;
+                                                  });
+                                                  context
+                                                      .read<ShelterAnimalBloc>()
+                                                      .add(
+                                                          const ShelterAnimalTypeSelected(
+                                                              null));
+                                                } else {
+                                                  setState(() {
+                                                    selectedType = type.id;
+                                                  });
+                                                  context
+                                                      .read<ShelterAnimalBloc>()
+                                                      .add(
+                                                          ShelterAnimalTypeSelected(
+                                                              type.id));
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: Chip(
+                                                  label: Text(
+                                                    type.name,
+                                                    style: TextStyle(
+                                                      color: isSelected
+                                                          ? white
+                                                          : primaryColor,
+                                                    ),
+                                                  ),
+                                                  backgroundColor: isSelected
+                                                      ? primaryColor
+                                                      : white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                    side: const BorderSide(
+                                                        style:
+                                                            BorderStyle.none),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GridView.builder(
+                                padding: const EdgeInsets.fromLTRB(
+                                    16.0, 0, 16.0, 32.0),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 16.0,
+                                  mainAxisSpacing: 16.0,
+                                  mainAxisExtent: screenHeight * 0.3,
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return index >= displayAnimals.length
+                                      ? const BottomLoader()
+                                      : ShelterAnimalListItem(
+                                          animal: displayAnimals[index]);
+                                },
+                                itemCount: state.hasReachedMax
+                                    ? displayAnimals.length
+                                    : displayAnimals.length + 1,
+                                physics: const NeverScrollableScrollPhysics(),
+                              )
+                            ],
+                          );
+                        case ShelterAnimalStatus.initial:
+                          return const Center(
+                              child: CircularProgressIndicator());
+                      }
+                    },
                   ),
                 ],
               ),
@@ -756,7 +759,7 @@ class _ShelterInfoField extends StatelessWidget {
       ),
       tileColor: white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
     );

@@ -1,12 +1,11 @@
-import 'package:dierenasiel_android/animals/animals.dart';
+import 'package:dierenasiel_android/shelters/shelters.dart';
 import 'package:flutter/material.dart';
 import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:animal_repository/animal_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AnimalListItem extends StatelessWidget {
-  const AnimalListItem({required this.animal, super.key});
+class ShelterAnimalListItem extends StatelessWidget {
+  const ShelterAnimalListItem({required this.animal, super.key});
 
   final Animal animal;
 
@@ -19,7 +18,7 @@ class AnimalListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AnimalDetail(animal: animal),
+            builder: (context) => ShelterAnimalDetail(animal: animal),
           ),
         );
       },

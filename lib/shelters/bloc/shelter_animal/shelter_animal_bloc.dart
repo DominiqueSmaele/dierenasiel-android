@@ -116,7 +116,8 @@ class ShelterAnimalBloc extends Bloc<ShelterAnimalEvent, ShelterAnimalState> {
           query: query);
 
       if (response.animals!.isEmpty) {
-        return emit(state.copyWith(status: ShelterAnimalStatus.notFound));
+        return emit(state.copyWith(
+            status: ShelterAnimalStatus.notFound, query: event.query));
       }
 
       searchCursor = response.meta['next_cursor'];
@@ -131,24 +132,25 @@ class ShelterAnimalBloc extends Bloc<ShelterAnimalEvent, ShelterAnimalState> {
         if (filteredAnimals.isEmpty) {
           return emit(state.copyWith(
               status: ShelterAnimalStatus.notFound,
-              searchedAnimals: response.animals));
+              searchedAnimals: response.animals,
+              query: event.query));
         }
 
         return emit(
           state.copyWith(
-            status: ShelterAnimalStatus.success,
-            filteredAnimals: filteredAnimals,
-            hasReachedMax: searchCursor == null,
-          ),
+              status: ShelterAnimalStatus.success,
+              filteredAnimals: filteredAnimals,
+              hasReachedMax: searchCursor == null,
+              query: event.query),
         );
       }
 
       emit(
         state.copyWith(
-          status: ShelterAnimalStatus.success,
-          searchedAnimals: response.animals,
-          hasReachedMax: searchCursor == null,
-        ),
+            status: ShelterAnimalStatus.success,
+            searchedAnimals: response.animals,
+            hasReachedMax: searchCursor == null,
+            query: event.query),
       );
     } catch (_) {
       emit(state.copyWith(status: ShelterAnimalStatus.failure));
@@ -158,24 +160,37 @@ class ShelterAnimalBloc extends Bloc<ShelterAnimalEvent, ShelterAnimalState> {
   void _onShelterAnimalTypeSelected(
       ShelterAnimalTypeSelected event, Emitter<ShelterAnimalState> emit) {
     if (event.typeId == null) {
+      if (state.query == null) {
+        return emit(
+          state.copyWith(
+              status: ShelterAnimalStatus.success,
+              filteredAnimals: [],
+              selectedType: null),
+        );
+      }
+
       return emit(
         state.copyWith(
-          status: ShelterAnimalStatus.success,
+          status: ShelterAnimalStatus.notFound,
           filteredAnimals: [],
           selectedType: null,
+          query: state.query,
         ),
       );
     }
 
-    final filteredAnimals = (state.searchedAnimals.isNotEmpty
-            ? state.searchedAnimals
-            : state.animals)
-        .where((animal) => animal.type.id == event.typeId)
-        .toList();
+    final filteredAnimals =
+        (state.searchedAnimals.isNotEmpty || state.query != null
+                ? state.searchedAnimals
+                : state.animals)
+            .where((animal) => animal.type.id == event.typeId)
+            .toList();
 
     if (filteredAnimals.isEmpty) {
       return emit(state.copyWith(
-          status: ShelterAnimalStatus.notFound, selectedType: event.typeId));
+          status: ShelterAnimalStatus.notFound,
+          selectedType: event.typeId,
+          query: state.query));
     }
 
     emit(
@@ -198,7 +213,9 @@ class ShelterAnimalBloc extends Bloc<ShelterAnimalEvent, ShelterAnimalState> {
 
       if (filteredAnimals.isEmpty) {
         return emit(state.copyWith(
-            status: ShelterAnimalStatus.notFound, searchedAnimals: []));
+            status: ShelterAnimalStatus.notFound,
+            searchedAnimals: [],
+            query: null));
       }
 
       return emit(
@@ -206,6 +223,7 @@ class ShelterAnimalBloc extends Bloc<ShelterAnimalEvent, ShelterAnimalState> {
           status: ShelterAnimalStatus.success,
           searchedAnimals: [],
           filteredAnimals: filteredAnimals,
+          query: null,
         ),
       );
     }
@@ -216,6 +234,7 @@ class ShelterAnimalBloc extends Bloc<ShelterAnimalEvent, ShelterAnimalState> {
         searchedAnimals: [],
         filteredAnimals: [],
         hasReachedMax: cursor == null,
+        query: null,
       ),
     );
   }

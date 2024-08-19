@@ -8,13 +8,13 @@ class Timeslot extends Equatable {
       required this.date,
       required this.startTime,
       required this.endTime,
-      required this.shelter});
+      this.shelter});
 
   final int id;
   final DateTime date;
   final DateTime startTime;
   final DateTime endTime;
-  final Shelter shelter;
+  final Shelter? shelter;
 
   factory Timeslot.fromJson(Map<String, dynamic> json) {
     return Timeslot(
@@ -22,7 +22,9 @@ class Timeslot extends Equatable {
       date: _convertStringToDatetime(json['date'] as String),
       startTime: DateTime.parse(json['start_time'] as String),
       endTime: DateTime.parse(json['end_time'] as String),
-      shelter: Shelter.fromJson(json['shelter'] as Map<String, dynamic>),
+      shelter: json['shelter'] != null
+          ? Shelter.fromJson(json['shelter'] as Map<String, dynamic>)
+          : null,
     );
   }
 

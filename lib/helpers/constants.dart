@@ -16,4 +16,5 @@ const Color green = Color(0xFF4BCC76);
 const Color orange = Color.fromARGB(255, 252, 180, 47);
 const Color red = Color(0xFFFD4646);
 const Color lightDarkRed = Color(0xFFFF6666);
+const Color pink = Color(0xFFF06292);
 const Color white = Color(0xFFFFFFFF);
