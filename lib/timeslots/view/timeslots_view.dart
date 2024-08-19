@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:dierenasiel_android/timeslots/timeslots.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:dierenasiel_android/helpers/helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dierenasiel_android/shelters/shelters.dart';
 
 class TimeslotsView extends StatefulWidget {
   const TimeslotsView({super.key});
@@ -24,7 +24,7 @@ class TimeslotsViewState extends State<TimeslotsView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 64.0),
+        minimum: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 48.0),
         child: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -89,7 +89,15 @@ class TimeslotsViewState extends State<TimeslotsView> {
                               icon: Icon(Icons.add_circle,
                                   color: Theme.of(context).primaryColor),
                               iconSize: 26.0,
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SheltersTimeslotPage(),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -100,7 +108,6 @@ class TimeslotsViewState extends State<TimeslotsView> {
                             itemCount: state.timeslots.length,
                             itemBuilder: (context, index) {
                               final timeslot = state.timeslots[index];
-                              print(context);
                               return Card(
                                 margin: const EdgeInsets.only(bottom: 16.0),
                                 shape: RoundedRectangleBorder(
@@ -115,7 +122,7 @@ class TimeslotsViewState extends State<TimeslotsView> {
                                       child: Row(
                                         children: [
                                           Text(
-                                            timeslot.shelter.name,
+                                            timeslot.shelter!.name,
                                             style: const TextStyle(
                                               color: primaryColor,
                                               fontWeight: FontWeight.bold,
@@ -143,7 +150,6 @@ class TimeslotsViewState extends State<TimeslotsView> {
                                               icon: const Icon(Icons.delete,
                                                   color: primaryColor),
                                               onPressed: () {
-                                                // Use the correct context
                                                 showDialog(
                                                   context: context,
                                                   builder: (BuildContext
@@ -168,14 +174,13 @@ class TimeslotsViewState extends State<TimeslotsView> {
                                                           onPressed: () {
                                                             Navigator.of(
                                                                     context)
-                                                                .pop(); // Dismiss the dialog
+                                                                .pop();
                                                           },
                                                         ),
                                                         TextButton(
                                                           child: const Text(
                                                               'Uitschrijven'),
                                                           onPressed: () {
-                                                            // Use dialogContext to access the provider
                                                             context
                                                                 .read<
                                                                     TimeslotBloc>()
@@ -183,7 +188,7 @@ class TimeslotsViewState extends State<TimeslotsView> {
                                                                     timeslot));
                                                             Navigator.of(
                                                                     dialogContext)
-                                                                .pop(); // Dismiss the dialog after deletion
+                                                                .pop();
                                                           },
                                                         ),
                                                       ],
@@ -223,7 +228,15 @@ class TimeslotsViewState extends State<TimeslotsView> {
                               icon: Icon(Icons.add_circle,
                                   color: Theme.of(context).primaryColor),
                               iconSize: 26.0,
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SheltersTimeslotPage(),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),

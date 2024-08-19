@@ -139,7 +139,8 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
           perPage: animalLimit, cursor: searchCursor, query: query);
 
       if (response.animals!.isEmpty) {
-        return emit(state.copyWith(status: AnimalStatus.notFound));
+        return emit(
+            state.copyWith(status: AnimalStatus.notFound, query: event.query));
       }
 
       searchCursor = response.meta['next_cursor'];
@@ -154,24 +155,25 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
         if (filteredAnimals.isEmpty) {
           return emit(state.copyWith(
               status: AnimalStatus.notFound,
-              searchedAnimals: response.animals));
+              searchedAnimals: response.animals,
+              query: event.query));
         }
 
         return emit(
           state.copyWith(
-            status: AnimalStatus.success,
-            filteredAnimals: filteredAnimals,
-            hasReachedMax: searchCursor == null,
-          ),
+              status: AnimalStatus.success,
+              filteredAnimals: filteredAnimals,
+              hasReachedMax: searchCursor == null,
+              query: event.query),
         );
       }
 
       emit(
         state.copyWith(
-          status: AnimalStatus.success,
-          searchedAnimals: response.animals,
-          hasReachedMax: searchCursor == null,
-        ),
+            status: AnimalStatus.success,
+            searchedAnimals: response.animals,
+            hasReachedMax: searchCursor == null,
+            query: event.query),
       );
     } catch (_) {
       emit(state.copyWith(status: AnimalStatus.failure));
@@ -181,24 +183,37 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
   void _onAnimalTypeSelected(
       AnimalTypeSelected event, Emitter<AnimalState> emit) {
     if (event.typeId == null) {
+      if (state.query == null) {
+        return emit(
+          state.copyWith(
+              status: AnimalStatus.success,
+              filteredAnimals: [],
+              selectedType: null),
+        );
+      }
+
       return emit(
         state.copyWith(
-          status: AnimalStatus.success,
+          status: AnimalStatus.notFound,
           filteredAnimals: [],
           selectedType: null,
+          query: state.query,
         ),
       );
     }
 
-    final filteredAnimals = (state.searchedAnimals.isNotEmpty
-            ? state.searchedAnimals
-            : state.animals)
-        .where((animal) => animal.type.id == event.typeId)
-        .toList();
+    final filteredAnimals =
+        (state.searchedAnimals.isNotEmpty || state.query != null
+                ? state.searchedAnimals
+                : state.animals)
+            .where((animal) => animal.type.id == event.typeId)
+            .toList();
 
     if (filteredAnimals.isEmpty) {
       return emit(state.copyWith(
-          status: AnimalStatus.notFound, selectedType: event.typeId));
+          status: AnimalStatus.notFound,
+          selectedType: event.typeId,
+          query: state.query));
     }
 
     emit(
@@ -220,8 +235,8 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
           .toList();
 
       if (filteredAnimals.isEmpty) {
-        return emit(
-            state.copyWith(status: AnimalStatus.notFound, searchedAnimals: []));
+        return emit(state.copyWith(
+            status: AnimalStatus.notFound, searchedAnimals: [], query: null));
       }
 
       return emit(
@@ -229,6 +244,7 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
           status: AnimalStatus.success,
           searchedAnimals: [],
           filteredAnimals: filteredAnimals,
+          query: null,
         ),
       );
     }
@@ -239,6 +255,7 @@ class AnimalBloc extends Bloc<AnimalEvent, AnimalState> {
         searchedAnimals: [],
         filteredAnimals: [],
         hasReachedMax: cursor == null,
+        query: null,
       ),
     );
   }

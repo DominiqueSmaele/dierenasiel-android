@@ -120,6 +120,7 @@ class ShelterRepository {
 
       return ShelterResponse.fromJson(jsonResponse);
     } catch (e) {
+      print(e);
       throw e;
     }
   }

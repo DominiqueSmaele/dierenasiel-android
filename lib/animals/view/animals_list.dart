@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:dierenasiel_android/animals/animals.dart';
 import 'package:dierenasiel_android/animals/widgets/widgets.dart';
-import 'package:animal_repository/animal_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AnimalsList extends StatefulWidget {
@@ -16,6 +15,9 @@ class AnimalsList extends StatefulWidget {
 }
 
 class AnimalsListState extends State<AnimalsList> {
+  final PageStorageKey<String> _typeListKey =
+      const PageStorageKey<String>('typeList');
+
   final TextEditingController _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _debounceDuration = const Duration(milliseconds: 300);
@@ -58,7 +60,8 @@ class AnimalsListState extends State<AnimalsList> {
                             minHeight: constraints.maxHeight,
                           ),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 32.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 32.0),
                             width: double.infinity,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -91,8 +94,7 @@ class AnimalsListState extends State<AnimalsList> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            minHeight: constraints
-                                .maxHeight, // Ensure it fills the screen height
+                            minHeight: constraints.maxHeight,
                           ),
                           child: Container(
                             padding:
@@ -160,6 +162,7 @@ class AnimalsListState extends State<AnimalsList> {
                               child: SizedBox(
                                 height: 100,
                                 child: ListView.builder(
+                                  key: _typeListKey,
                                   padding: EdgeInsets.zero,
                                   scrollDirection: Axis.horizontal,
                                   itemCount: state.types.length,
@@ -200,7 +203,8 @@ class AnimalsListState extends State<AnimalsList> {
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
-                                            side: BorderSide.none,
+                                            side: const BorderSide(
+                                                style: BorderStyle.none),
                                           ),
                                         ),
                                       ),
@@ -282,6 +286,7 @@ class AnimalsListState extends State<AnimalsList> {
                               child: SizedBox(
                                 height: 100,
                                 child: ListView.builder(
+                                  key: const PageStorageKey<String>('typeList'),
                                   scrollDirection: Axis.horizontal,
                                   itemCount: state.types.length,
                                   itemBuilder: (context, index) {
@@ -321,7 +326,8 @@ class AnimalsListState extends State<AnimalsList> {
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8.0),
-                                            side: BorderSide.none,
+                                            side: const BorderSide(
+                                                style: BorderStyle.none),
                                           ),
                                         ),
                                       ),

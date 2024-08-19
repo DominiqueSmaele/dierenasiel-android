@@ -11,6 +11,7 @@ final class AnimalState extends Equatable {
     this.types = const <Type>[],
     this.hasReachedMax = false,
     this.selectedType,
+    this.query,
   });
 
   final AnimalStatus status;
@@ -20,6 +21,7 @@ final class AnimalState extends Equatable {
   final List<Type> types;
   final bool hasReachedMax;
   final int? selectedType;
+  final String? query;
 
   AnimalState copyWith({
     AnimalStatus? status,
@@ -30,6 +32,7 @@ final class AnimalState extends Equatable {
     bool? hasReachedMax,
     bool? refresh,
     int? selectedType,
+    String? query,
   }) {
     return AnimalState(
       status: status ?? this.status,
@@ -39,6 +42,7 @@ final class AnimalState extends Equatable {
       types: types ?? this.types,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       selectedType: selectedType,
+      query: query,
     );
   }
 
@@ -50,6 +54,7 @@ final class AnimalState extends Equatable {
         filteredAnimals,
         types,
         hasReachedMax,
-        selectedType
+        selectedType,
+        query,
       ];
 }

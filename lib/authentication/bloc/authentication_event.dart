@@ -13,7 +13,6 @@ final class AuthenticationUserUpdated extends AuthenticationEvent {
 
   final User user;
 
-  @override
   List<Object> get props => [user];
 }
 

@@ -1,32 +1,19 @@
-import 'package:dierenasiel_android/animals/animals.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dierenasiel_android/helpers/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animal_repository/animal_repository.dart';
 import 'package:quality_repository/quality_repository.dart';
-import 'package:dierenasiel_android/shelters/shelters.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:type_repository/type_repository.dart';
 
-class AnimalDetail extends StatelessWidget {
-  const AnimalDetail({required this.animal, super.key});
+class ShelterAnimalDetail extends StatelessWidget {
+  const ShelterAnimalDetail({required this.animal, super.key});
 
   final Animal animal;
 
   @override
   Widget build(BuildContext context) {
-    String shelterImageUrl;
     double screenHeight = MediaQuery.of(context).size.height;
     double statusBarHeight = MediaQuery.of(context).viewPadding.top;
-
-    if (animal.shelter.image == null) {
-      shelterImageUrl =
-          '${dotenv.env['WEB']}/storage/images/shelter/logo-placeholder.png';
-    } else {
-      shelterImageUrl = animal.shelter.image!.original.url;
-    }
 
     final List<Quality> sortedAnimalQualities = List.from(animal.qualities);
     sortedAnimalQualities.sort((a, b) => a.name.compareTo(b.name));
@@ -222,108 +209,6 @@ class AnimalDetail extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 25.0),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider(
-                                  create: (context) => ShelterAnimalBloc(
-                                    shelter: animal.shelter,
-                                    animalRepository:
-                                        context.read<AnimalRepository>(),
-                                    typeRepository:
-                                        context.read<TypeRepository>(),
-                                  )..add(ShelterAnimalFetched()),
-                                  child: ShelterDetail(shelter: animal.shelter),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(24.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(
-                                          fontSize: 21.0,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: animal.name,
-                                            style: const TextStyle(
-                                              color: primaryColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const TextSpan(
-                                            text: ' verblijft momenteel in...',
-                                            style: TextStyle(
-                                              color: textColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 25.0),
-                                    Center(
-                                      child: Column(
-                                        children: [
-                                          CachedNetworkImage(
-                                            imageUrl: shelterImageUrl,
-                                            placeholder: (context, url) =>
-                                                const Center(
-                                                    child:
-                                                        CircularProgressIndicator()),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Icon(Icons.error),
-                                            fit: BoxFit.fitHeight,
-                                            height: 125.0,
-                                            width: double.infinity,
-                                          ),
-                                          const SizedBox(height: 10.0),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16.0),
-                                            child: Text(
-                                              animal.shelter.name,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                color: textColor,
-                                                fontSize: 21.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Positioned(
-                                bottom: 15,
-                                right: 15,
-                                child: Icon(
-                                  Icons.open_in_new,
-                                  color: primaryColor,
-                                  size: 16.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
                       ],
                     ),
                   ),
